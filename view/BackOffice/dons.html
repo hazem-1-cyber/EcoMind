@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoMind - Gestion des dons</title>
+  <meta name="theme-color" content="#0B3D2E">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="images/logo-ecomind.png" alt="EcoMind Logo">
+      <div class="logo-text">
+        <h1>ECO MIND</h1>
+        <p>BACK OFFICE</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu principal -->
+  <div class="container">
+    <h1 class="page-title">Gestion des dons</h1>
+    <p class="page-subtitle">Suivez et gérez tous les dons reçus pour les associations partenaires.</p>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">127</div>
+        <div class="stat-label">Dons reçus</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">48 750 TND</div>
+        <div class="stat-label">Total collecté</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Associations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">89%</div>
+        <div class="stat-label">Dons validés</div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <div class="filter-group">
+        <label for="filter-association">Association</label>
+        <select id="filter-association">
+          <option value="">Toutes les associations</option>
+          <option value="atdd">ATDD</option>
+          <option value="tunisie-recyclage">Tunisie Recyclage</option>
+          <option value="aepd">AEPD</option>
+          <option value="green-tunisia">Green Tunisia</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-date">Période</label>
+        <select id="filter-date">
+          <option>Derniers 7 jours</option>
+          <option>Derniers 30 jours</option>
+          <option>Ce mois-ci</option>
+          <option>Tout</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-status">Statut</label>
+        <select id="filter-status">
+          <option value="">Tous</option>
+          <option value="pending">En attente</option>
+          <option value="validated">Validé</option>
+          <option value="rejected">Rejeté</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tableau des dons -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Donateur</th>
+            <th>Montant</th>
+            <th>Association</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Don validé -->
+          <tr>
+            <td>09/11/2025</td>
+            <td>أحمد بن علي</td>
+            <td><strong>200 TND</strong></td>
+            <td>ATDD</td>
+            <td><span class="status validated">Validé</span></td>
+            <td class="actions"></td>
+          </tr>
+
+          <!-- Don en attente -->
+          <tr>
+            <td>08/11/2025</td>
+            <td>Fatima Z.</td>
+            <td><strong>100 TND</strong></td>
+            <td>Tunisie Recyclage</td>
+            <td><span class="status pending">En attente</span></td>
+            <td class="actions">
+              <form method="post" style="display:inline;">
+                <input type="hidden" name="action" value="validate">
+                <input type="hidden" name="id" value="2">
+                <button type="submit" class="btn-action btn-validate">Valider</button>
+              </form>
+              <form method="post" style="display:inline;">
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="id" value="2">
+                <button type="submit" class="btn-action btn-reject">Rejeter</button>
+              </form>
+            </td>
+          </tr>
+
+          <!-- Don validé -->
+          <tr>
+            <td>07/11/2025</td>
+            <td>Mohamed K.</td>
+            <td><strong>500 TND</strong></td>
+            <td>Green Tunisia</td>
+            <td><span class="status validated">Validé</span></td>
+            <td class="actions"></td>
+          </tr>
+
+          <!-- Don en attente -->
+          <tr>
+            <td>06/11/2025</td>
+            <td>Sarah L.</td>
+            <td><strong>75 TND</strong></td>
+            <td>AEPD</td>
+            <td><span class="status pending">En attente</span></td>
+            <td class="actions">
+              <form method="post" style="display:inline;">
+                <input type="hidden" name="action" value="validate">
+                <input type="hidden" name="id" value="4">
+                <button type="submit" class="btn-action btn-validate">Valider</button>
+              </form>
+              <form method="post" style="display:inline;">
+                <input type="hidden" name="action" value="reject">
+                <input type="hidden" name="id" value="4">
+                <button type="submit" class="btn-action btn-reject">Rejeter</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 <strong>EcoMind</strong> • <a href="#">Mentions légales</a> • <a href="#">Support technique</a></p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoMind - Gestion des associations</title>
+  <meta name="theme-color" content="#0B3D2E">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="association-page">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="images/logo-ecomind.png" alt="EcoMind Logo">
+      <div class="logo-text">
+        <h1>ECO MIND</h1>
+        <p>BACK OFFICE</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu principal -->
+  <div class="container">
+    <h1 class="page-title">Associations partenaires</h1>
+    <p class="page-subtitle">Ajoutez, modifiez et supprimez les associations .</p>
+
+    <!-- Formulaire Association -->
+    <div class="form-card">
+      <h2 class="section-title">Nouvelle association</h2>
+      <p class="section-subtitle">Renseignez les informations principales de l'association.</p>
+
+      <form>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="assoc-nom">Nom de l'association</label>
+            <input type="text" id="assoc-nom" name="nom" placeholder="ATDD - Association Tunisienne de Développement Durable">
+          </div>
+
+          <div class="form-group">
+            <label for="assoc-categorie">Catégorie</label>
+            <select id="assoc-categorie" name="categorie">
+              <option value="">Choisir...</option>
+              <option>Recyclage</option>
+              <option>Reboisement</option>
+              <option>Sensibilisation</option>
+              <option>Protection des côtes</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assoc-ville">Ville</label>
+            <input type="text" id="assoc-ville" name="ville" placeholder="Tunis">
+          </div>
+
+          <div class="form-group">
+            <label for="assoc-email">Email</label>
+            <input type="email" id="assoc-email" name="email" placeholder="contact@association.tn">
+          </div>
+
+          <div class="form-group">
+            <label for="assoc-site">Site web</label>
+            <input type="url" id="assoc-site" name="site" placeholder="https://www.association.tn">
+          </div>
+
+          <div class="form-group">
+            <label for="assoc-logo">Logo (URL)</label>
+            <input type="url" id="assoc-logo" name="logo" placeholder="https://cdn.exemple.com/logo.png">
+          </div>
+
+          <div class="form-group full">
+            <label for="assoc-desc">Description</label>
+            <textarea id="assoc-desc" name="description" rows="4" placeholder="Mission, activités et objectifs..."></textarea>
+          </div>
+
+          <div class="form-actions full">
+            <button type="submit" class="btn-primary">Enregistrer l'association</button>
+            <button type="reset" class="btn-secondary-ghost">Annuler</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tableau Associations -->
+    <div class="table-container table-container-spaced">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Catégorie</th>
+            <th>Ville</th>
+            <th>Email</th>
+            <th>Site</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ATDD</td>
+            <td>Développement Durable</td>
+            <td>Tunis</td>
+            <td>contact@atdd.tn</td>
+            <td><a href="#" target="_blank">Site</a></td>
+            <td class="actions">
+              <button class="btn-action btn-edit">Modifier</button>
+              <button class="btn-action btn-delete">Supprimer</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Tunisie Recyclage</td>
+            <td>Recyclage</td>
+            <td>La Marsa</td>
+            <td>hello@recyclage.tn</td>
+            <td><a href="#" target="_blank">Site</a></td>
+            <td class="actions">
+              <button class="btn-action btn-edit">Modifier</button>
+              <button class="btn-action btn-delete">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 <strong>EcoMind</strong> • <a href="#">Mentions légales</a> • <a href="#">Support technique</a></p>
+  </footer>
+
+</body>
+</html>
+
+
