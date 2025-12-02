@@ -15,6 +15,31 @@ class AdminController {
         $this->propositionModel = new Proposition();
     }
 
+    public function dashboard() {
+        // Handle deletes from dashboard
+        if (isset($_GET['delete_event'])) {
+            $this->evenementModel->delete($_GET['delete_event']);
+            header('Location: index.php?page=admin_dashboard');
+            exit;
+        }
+        if (isset($_GET['delete_inscription'])) {
+            $this->inscriptionModel->delete($_GET['delete_inscription']);
+            header('Location: index.php?page=admin_dashboard');
+            exit;
+        }
+        if (isset($_GET['delete_proposition'])) {
+            $this->propositionModel->delete($_GET['delete_proposition']);
+            header('Location: index.php?page=admin_dashboard');
+            exit;
+        }
+        
+        $events = $this->evenementModel->getAll();
+        $inscriptions = $this->inscriptionModel->getAll();
+        $propositions = $this->propositionModel->getAll();
+        
+        require __DIR__ . '/../View/BackOffice/dashboard.php';
+    }
+
     public function events() {
         // Handle delete
         if (isset($_GET['delete'])) {
@@ -35,13 +60,10 @@ class AdminController {
                     'image_second' => $_POST['image_second']
                 ];
                 $this->evenementModel->update($_GET['edit'], $data);
-                header('Location: index.php?page=admin_events');
+                header('Location: index.php?page=admin_dashboard#events');
                 exit;
             }
-            require __DIR__ . '/../View/templates/header.php';
-            require __DIR__ . '/../View/templates/navbar.php';
             require __DIR__ . '/../View/BackOffice/admin_events_form.php';
-            require __DIR__ . '/../View/templates/footer.php';
             exit;
         }
 
@@ -56,22 +78,17 @@ class AdminController {
                     'image_second' => $_POST['image_second']
                 ];
                 $this->evenementModel->create($data);
-                header('Location: index.php?page=admin_events');
+                header('Location: index.php?page=admin_dashboard#events');
                 exit;
             }
             $event = null;
-            require __DIR__ . '/../View/templates/header.php';
-            require __DIR__ . '/../View/templates/navbar.php';
             require __DIR__ . '/../View/BackOffice/admin_events_form.php';
-            require __DIR__ . '/../View/templates/footer.php';
             exit;
         }
 
-        $events = $this->evenementModel->getAll();
-        require __DIR__ . '/../View/templates/header.php';
-        require __DIR__ . '/../View/templates/navbar.php';
-        require __DIR__ . '/../View/BackOffice/admin_events.php';
-        require __DIR__ . '/../View/templates/footer.php';
+        // Redirect to dashboard
+        header('Location: index.php?page=admin_dashboard');
+        exit;
     }
 
     public function inscriptions() {
@@ -95,14 +112,11 @@ class AdminController {
                     'tel' => $_POST['tel']
                 ];
                 $this->inscriptionModel->update($_GET['edit'], $data);
-                header('Location: index.php?page=admin_inscriptions');
+                header('Location: index.php?page=admin_dashboard#inscriptions');
                 exit;
             }
             $events = $this->evenementModel->getAll();
-            require __DIR__ . '/../View/templates/header.php';
-            require __DIR__ . '/../View/templates/navbar.php';
             require __DIR__ . '/../View/BackOffice/admin_inscriptions_form.php';
-            require __DIR__ . '/../View/templates/footer.php';
             exit;
         }
 
@@ -118,23 +132,18 @@ class AdminController {
                     'tel' => $_POST['tel']
                 ];
                 $this->inscriptionModel->create($data);
-                header('Location: index.php?page=admin_inscriptions');
+                header('Location: index.php?page=admin_dashboard#inscriptions');
                 exit;
             }
             $inscription = null;
             $events = $this->evenementModel->getAll();
-            require __DIR__ . '/../View/templates/header.php';
-            require __DIR__ . '/../View/templates/navbar.php';
             require __DIR__ . '/../View/BackOffice/admin_inscriptions_form.php';
-            require __DIR__ . '/../View/templates/footer.php';
             exit;
         }
 
-        $inscriptions = $this->inscriptionModel->getAll();
-        require __DIR__ . '/../View/templates/header.php';
-        require __DIR__ . '/../View/templates/navbar.php';
-        require __DIR__ . '/../View/BackOffice/admin_inscriptions.php';
-        require __DIR__ . '/../View/templates/footer.php';
+        // Redirect to dashboard
+        header('Location: index.php?page=admin_dashboard');
+        exit;
     }
 
     public function propositions() {
@@ -157,13 +166,10 @@ class AdminController {
                     'description' => $_POST['description']
                 ];
                 $this->propositionModel->update($_GET['edit'], $data);
-                header('Location: index.php?page=admin_propositions');
+                header('Location: index.php?page=admin_dashboard#propositions');
                 exit;
             }
-            require __DIR__ . '/../View/templates/header.php';
-            require __DIR__ . '/../View/templates/navbar.php';
             require __DIR__ . '/../View/BackOffice/admin_propositions_form.php';
-            require __DIR__ . '/../View/templates/footer.php';
             exit;
         }
 
@@ -178,21 +184,16 @@ class AdminController {
                     'description' => $_POST['description']
                 ];
                 $this->propositionModel->create($data);
-                header('Location: index.php?page=admin_propositions');
+                header('Location: index.php?page=admin_dashboard#propositions');
                 exit;
             }
             $proposition = null;
-            require __DIR__ . '/../View/templates/header.php';
-            require __DIR__ . '/../View/templates/navbar.php';
             require __DIR__ . '/../View/BackOffice/admin_propositions_form.php';
-            require __DIR__ . '/../View/templates/footer.php';
             exit;
         }
 
-        $propositions = $this->propositionModel->getAll();
-        require __DIR__ . '/../View/templates/header.php';
-        require __DIR__ . '/../View/templates/navbar.php';
-        require __DIR__ . '/../View/BackOffice/admin_propositions.php';
-        require __DIR__ . '/../View/templates/footer.php';
+        // Redirect to dashboard
+        header('Location: index.php?page=admin_dashboard');
+        exit;
     }
 }

@@ -57,13 +57,14 @@ switch ($page) {
         break;
 
     case 'admin':
-        // back-office minimal read-only views (connexion externe gérée ailleurs)
+        // Redirect to dashboard
         $ac = new AdminController();
-        $sub = $_GET['sub'] ?? 'events';
-        if ($sub === 'events') $ac->events();
-        elseif ($sub === 'inscriptions') $ac->inscriptions();
-        elseif ($sub === 'propositions') $ac->propositions();
-        else $ac->events();
+        $ac->dashboard();
+        break;
+
+    case 'admin_dashboard':
+        $ac = new AdminController();
+        $ac->dashboard();
         break;
 
     case 'admin_events':

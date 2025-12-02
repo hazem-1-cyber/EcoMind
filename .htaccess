@@ -11,7 +11,8 @@ RewriteRule ^proposer$ index.php?page=proposer [L]
 RewriteRule ^inscription/([0-9]+)$ index.php?page=inscription&id=$1 [L]
 
 # Admin short URLs
-RewriteRule ^admin$ index.php?page=admin_events [L]
+RewriteRule ^admin$ index.php?page=admin_dashboard [L]
+RewriteRule ^admin/dashboard$ index.php?page=admin_dashboard [L]
 RewriteRule ^admin/events$ index.php?page=admin_events [L]
 RewriteRule ^admin/inscriptions$ index.php?page=admin_inscriptions [L]
 RewriteRule ^admin/propositions$ index.php?page=admin_propositions [L]
