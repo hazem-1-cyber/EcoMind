@@ -169,10 +169,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
               <li class="flex items-center">
                 <a
-                  href="./pages/sign-in.html"
+                    href="/projet_web/app/views/FrontOffice/public/index.php"
                   class="block px-0 py-2 text-sm font-semibold transition-all ease-nav-brand text-slate-500">
                   <i class="fa fa-user sm:mr-1"></i>
-                  <span class="hidden sm:inline">Admin</span>
+                  <span class="hidden sm:inline">frontwebsite</span>
                 </a>
               </li>
             </ul>

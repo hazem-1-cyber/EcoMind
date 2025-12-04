@@ -5,32 +5,43 @@ require_once 'C:/xampp/htdocs/projet_web/app/controllers/FrontOfficeController.p
 $controller = new FrontOfficeController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    if ($controller->login($email, $password)) {
-        // Récupérer les infos complètes de l'utilisateur
-        $user = $controller->getUserByEmail($email);
+    // Fetch user
+    $user = $controller->getUserByEmail($email);
 
-        // Stocker les infos en session
+    // Email not found
+    if (!$user) {
+        $error = "Email ou mot de passe incorrect.";
+    }
+    // Check if banned
+    elseif ($user['is_banned'] == 1) {
+        $error = "Your account has been banned. Please contact support.";
+    }
+    // Check password ONLY after checking ban
+    elseif (!password_verify($password, $user['password'])) {
+        $error = "Email ou mot de passe incorrect.";
+    }
+    // Everything OK → login
+    else {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_role'] = $user['role'] ?? 'user'; // fallback
+        $_SESSION['user_role'] = $user['role'] ?? 'user';
 
-        // Redirection selon le rôle
         if ($_SESSION['user_role'] === 'admin') {
-      header("Location: /projet_web/app/views/BackOffice/build/index.php");
-exit;
-
+            header("Location: /projet_web/app/views/BackOffice/build/index.php");
+            exit;
         } else {
-            header("Location: index.php"); // utilisateur normal
+            header("Location: index.php");
+            exit;
         }
-        exit;
-    } else {
-        $error = "Email ou mot de passe incorrect.";
     }
 }
 ?>
+
+
 
 <html lang="en">
 
@@ -60,22 +71,32 @@ exit;
                     href="index.php">home</a></li>
                 <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium"
                     href="">Our shop</a></li>
-                    <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium"
+                <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium"
                     href="">Eventes</a></li>
-                
+
                 <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium"
                     href="">Contact us</a></li>
                 <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium"
                     href="">Blog</a></li>
-             
-             <?php if (!isset($_SESSION['user_id'])): ?>
-        <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="login.php">Login</a></li>
-        <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="register.php">Register</a></li>
-    <?php else: ?>
-        <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="logout.php">Logout</a></li>
-        <li class="mr-4 lg:mr-8"><span class="inline-block text-black font-medium">Hello, <?= htmlspecialchars($_SESSION['user_name']); ?></span></li>
-          <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="profile.php">profile</a></li>
-    <?php endif; ?>
+
+
+
+                <?php if (!isset($_SESSION['user_id'])): ?>
+                  <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="login.php">Login</a></li>
+                  <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="register.php">Register</a></li>
+                <?php else: ?> <li class="mr-4 lg:mr-8"><span class="inline-block text-black font-medium">Hello, <?= htmlspecialchars($_SESSION['user_name']); ?></span></li>
+                  <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="profile.php">profile</a></li>
+
+                  <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="logout.php">Logout</a></li>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                  <li class="mr-4 lg:mr-8">
+                    <a class="inline-block text-white bg-teal-900 hover:bg-lime-500 hover:text-black rounded-full px-4 py-2 font-medium transition"
+                      href="/projet_web/app/views/BackOffice/build/index.php">
+                      Dashboard
+                    </a>
+                  </li>
+                <?php endif; ?>
               </ul>
               <div class="flex items-center justify-end">
                 <div class="hidden md:block">
@@ -184,6 +205,11 @@ exit;
         <div class="max-w-sm mx-auto">
           <form action="" method="POST">
             <h3 class="text-4xl text-center font-medium mb-10">Login</h3>
+<?php if(isset($error)): ?>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+<?php endif; ?>
 
             <label class="block pl-4 mb-1 text-sm font-medium" for="email">Email</label>
             <input name="email" id="email"

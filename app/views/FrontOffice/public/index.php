@@ -38,10 +38,18 @@
              <?php if (!isset($_SESSION['user_id'])): ?>
         <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="login.php">Login</a></li>
         <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="register.php">Register</a></li>
-    <?php else: ?>
-        <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="logout.php">Logout</a></li>
-        <li class="mr-4 lg:mr-8"><span class="inline-block text-black font-medium">Hello, <?= htmlspecialchars($_SESSION['user_name']); ?></span></li>
+    <?php else: ?> <li class="mr-4 lg:mr-8"><span class="inline-block text-black font-medium">Hello, <?= htmlspecialchars($_SESSION['user_name']); ?></span></li>
           <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="profile.php">profile</a></li>
+          
+        <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="logout.php">Logout</a></li>
+        <?php endif; ?>
+          <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+        <li class="mr-4 lg:mr-8">
+            <a class="inline-block text-white bg-teal-900 hover:bg-lime-500 hover:text-black rounded-full px-4 py-2 font-medium transition duration-200" 
+               href="/projet_web/app/views/BackOffice/build/index.php">
+               Dashboard
+            </a>
+        </li>
     <?php endif; ?>
 
                 </li>
