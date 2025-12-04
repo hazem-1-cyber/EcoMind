@@ -68,8 +68,8 @@ $pageTitle = $isEdit ? 'Modifier une inscription' : 'Ajouter une inscription';
                 <select name="evenement_id" required>
                     <option value="">-- Sélectionner un événement --</option>
                     <?php foreach($events as $event): ?>
-                        <option value="<?= $event['id'] ?>" <?= ($isEdit && $inscription['evenement_id'] == $event['id']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($event['titre']) ?>
+                        <option value="<?= $event->getId() ?>" <?= ($isEdit && $inscription->getEvenementId() == $event->getId()) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($event->getTitre()) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -77,27 +77,27 @@ $pageTitle = $isEdit ? 'Modifier une inscription' : 'Ajouter une inscription';
 
             <div class="form-group">
                 <label>Nom*</label>
-                <input type="text" name="nom" value="<?= $isEdit ? htmlspecialchars($inscription['nom']) : '' ?>" required>
+                <input type="text" name="nom" value="<?= $isEdit ? htmlspecialchars($inscription->getNom()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Prénom*</label>
-                <input type="text" name="prenom" value="<?= $isEdit ? htmlspecialchars($inscription['prenom']) : '' ?>" required>
+                <input type="text" name="prenom" value="<?= $isEdit ? htmlspecialchars($inscription->getPrenom()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Âge*</label>
-                <input type="number" name="age" min="12" max="70" value="<?= $isEdit ? $inscription['age'] : '' ?>" required>
+                <input type="number" name="age" min="12" max="70" value="<?= $isEdit ? $inscription->getAge() : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Email*</label>
-                <input type="email" name="email" value="<?= $isEdit ? htmlspecialchars($inscription['email']) : '' ?>" required>
+                <input type="email" name="email" value="<?= $isEdit ? htmlspecialchars($inscription->getEmail()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Téléphone*</label>
-                <input type="text" name="tel" value="<?= $isEdit ? htmlspecialchars($inscription['tel']) : '' ?>" required>
+                <input type="text" name="tel" value="<?= $isEdit ? htmlspecialchars($inscription->getTel()) : '' ?>" required>
             </div>
 
             <div class="form-actions">

@@ -2,53 +2,65 @@
 // Controller/InscriptionController.php
 require_once __DIR__ . '/../Model/Inscription.php';
 require_once __DIR__ . '/../Model/Evenement.php';
+require_once __DIR__ . '/../Core/Response.php';
 
 class InscriptionController {
-    private $model;
+    private $request;
+    private $inscriptionModel;
     private $evenementModel;
 
-    public function __construct() {
-        $this->model = new Inscription();
+    public function __construct(Request $request) {
+        $this->request = $request;
+        $this->inscriptionModel = new Inscription();
         $this->evenementModel = new Evenement();
     }
 
-    public function form($eventId) {
-        $event = $this->evenementModel->getById($eventId);
-        if (!$event) {
-            echo "Événement introuvable.";
+    /**
+     * Display inscription form or handle submission
+     */
+    public function index() {
+        $eventId = $this->request->get('id');
+        
+        if (!$eventId) {
+            $response = new Response();
+            $response->redirect('index.php?page=events');
             return;
         }
+        
+        // Handle form submission
+        if ($this->request->isPost()) {
+            $inscription = new InscriptionEntity();
+            $inscription->setEvenementId($this->request->post('evenement_id'))
+                       ->setNom($this->request->post('nom'))
+                       ->setPrenom($this->request->post('prenom'))
+                       ->setAge($this->request->post('age'))
+                       ->setEmail($this->request->post('email'))
+                       ->setTel($this->request->post('tel'));
+            
+            $this->inscriptionModel->create($inscription);
+            
+            $response = new Response();
+            $response->redirect('index.php?page=events&msg=inscription_ok');
+            return;
+        }
+        
+        // Display form
+        $event = $this->evenementModel->getById($eventId);
+        
+        if (!$event) {
+            $response = new Response('Événement introuvable', 404);
+            $response->send();
+            return;
+        }
+        
+        ob_start();
         require __DIR__ . '/../View/templates/header.php';
         require __DIR__ . '/../View/templates/navbar.php';
         require __DIR__ . '/../View/FrontOffice/inscription.php';
         require __DIR__ . '/../View/templates/footer.php';
-    }
-
-    public function submit() {
-        // traitement POST
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = [
-                'evenement_id' => $_POST['evenement_id'] ?? null,
-                'nom' => trim($_POST['nom'] ?? ''),
-                'prenom' => trim($_POST['prenom'] ?? ''),
-                'age' => intval($_POST['age'] ?? 0),
-                'email' => trim($_POST['email'] ?? ''),
-                'tel' => trim($_POST['tel'] ?? '')
-            ];
-            // (on suppose la validation JS a eu lieu côté client) -> serveur = vérif minimale
-            if (empty($data['nom']) || empty($data['prenom']) || empty($data['email'])) {
-                $_SESSION['error'] = "Veuillez remplir les champs obligatoires.";
-                header("Location: ".$_SERVER['HTTP_REFERER']);
-                exit;
-            }
-            $ok = $this->model->create($data);
-            if ($ok) {
-                // redirection vers page principale avec message (simplifié)
-                header('Location: index.php?page=events&msg=inscription_ok');
-                exit;
-            } else {
-                echo "Erreur lors de l'inscription.";
-            }
-        }
+        $content = ob_get_clean();
+        
+        $response = new Response($content);
+        $response->send();
     }
 }

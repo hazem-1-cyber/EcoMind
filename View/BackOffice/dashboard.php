@@ -1,18 +1,10 @@
 <?php
-// dashboard.php
-// Calculate stats
-$totalEvents = count($events);
-$totalInscriptions = count($inscriptions);
-$totalPropositions = count($propositions);
-
-// Count today's inscriptions
-$today = date('Y-m-d');
-$inscriptionsToday = 0;
-foreach ($inscriptions as $ins) {
-    if (strpos($ins['date_inscription'], $today) === 0) {
-        $inscriptionsToday++;
-    }
-}
+// dashboard.php - Pure view, no business logic
+// Data is passed from controller: $events, $inscriptions, $propositions, $stats
+$totalEvents = $stats['totalEvents'];
+$totalInscriptions = $stats['totalInscriptions'];
+$inscriptionsToday = $stats['inscriptionsToday'];
+$totalPropositions = $stats['totalPropositions'];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -206,13 +198,13 @@ foreach ($inscriptions as $ins) {
                     <tbody>
                         <?php foreach($events as $e): ?>
                         <tr>
-                            <td><?= $e['id'] ?></td>
-                            <td><?= htmlspecialchars($e['titre']) ?></td>
-                            <td><?= htmlspecialchars($e['type']) ?></td>
-                            <td><?= $e['date_creation'] ?></td>
+                            <td><?= $e->getId() ?></td>
+                            <td><?= htmlspecialchars($e->getTitre()) ?></td>
+                            <td><?= htmlspecialchars($e->getType()) ?></td>
+                            <td><?= $e->getDateCreation() ?></td>
                             <td class="actions">
-                                <a href="<?= BASE_URL ?>/index.php?page=admin_events&edit=<?= $e['id'] ?>" class="btn-edit">Modifier</a>
-                                <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard&delete_event=<?= $e['id'] ?>" 
+                                <a href="<?= BASE_URL ?>/index.php?page=admin_events&edit=<?= $e->getId() ?>" class="btn-edit">Modifier</a>
+                                <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard&delete_event=<?= $e->getId() ?>" 
                                    class="btn-delete" 
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">
                                    Supprimer
@@ -251,17 +243,17 @@ foreach ($inscriptions as $ins) {
                     <tbody>
                         <?php foreach($inscriptions as $ins): ?>
                         <tr>
-                            <td><?= $ins['id'] ?></td>
-                            <td><?= $ins['evenement_id'] ?></td>
-                            <td><?= htmlspecialchars($ins['nom']) ?></td>
-                            <td><?= htmlspecialchars($ins['prenom']) ?></td>
-                            <td><?= $ins['age'] ?></td>
-                            <td><?= htmlspecialchars($ins['email']) ?></td>
-                            <td><?= htmlspecialchars($ins['tel']) ?></td>
-                            <td><?= $ins['date_inscription'] ?></td>
+                            <td><?= $ins->getId() ?></td>
+                            <td><?= $ins->getEvenementId() ?></td>
+                            <td><?= htmlspecialchars($ins->getNom()) ?></td>
+                            <td><?= htmlspecialchars($ins->getPrenom()) ?></td>
+                            <td><?= $ins->getAge() ?></td>
+                            <td><?= htmlspecialchars($ins->getEmail()) ?></td>
+                            <td><?= htmlspecialchars($ins->getTel()) ?></td>
+                            <td><?= $ins->getDateInscription() ?></td>
                             <td class="actions">
-                                <a href="<?= BASE_URL ?>/index.php?page=admin_inscriptions&edit=<?= $ins['id'] ?>" class="btn-edit">Modifier</a>
-                                <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard&delete_inscription=<?= $ins['id'] ?>" 
+                                <a href="<?= BASE_URL ?>/index.php?page=admin_inscriptions&edit=<?= $ins->getId() ?>" class="btn-edit">Modifier</a>
+                                <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard&delete_inscription=<?= $ins->getId() ?>" 
                                    class="btn-delete" 
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?')">
                                    Supprimer
@@ -299,16 +291,16 @@ foreach ($inscriptions as $ins) {
                     <tbody>
                         <?php foreach($propositions as $p): ?>
                         <tr>
-                            <td><?= $p['id'] ?></td>
-                            <td><?= htmlspecialchars($p['association_nom']) ?></td>
-                            <td><?= htmlspecialchars($p['email_contact']) ?></td>
-                            <td><?= htmlspecialchars($p['tel']) ?></td>
-                            <td><?= htmlspecialchars($p['type']) ?></td>
-                            <td><?= htmlspecialchars(substr($p['description'], 0, 50)) ?>...</td>
-                            <td><?= $p['date_proposition'] ?></td>
+                            <td><?= $p->getId() ?></td>
+                            <td><?= htmlspecialchars($p->getAssociationNom()) ?></td>
+                            <td><?= htmlspecialchars($p->getEmailContact()) ?></td>
+                            <td><?= htmlspecialchars($p->getTel()) ?></td>
+                            <td><?= htmlspecialchars($p->getType()) ?></td>
+                            <td><?= htmlspecialchars(substr($p->getDescription(), 0, 50)) ?>...</td>
+                            <td><?= $p->getDateProposition() ?></td>
                             <td class="actions">
-                                <a href="<?= BASE_URL ?>/index.php?page=admin_propositions&edit=<?= $p['id'] ?>" class="btn-edit">Modifier</a>
-                                <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard&delete_proposition=<?= $p['id'] ?>" 
+                                <a href="<?= BASE_URL ?>/index.php?page=admin_propositions&edit=<?= $p->getId() ?>" class="btn-edit">Modifier</a>
+                                <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard&delete_proposition=<?= $p->getId() ?>" 
                                    class="btn-delete" 
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette proposition ?')">
                                    Supprimer

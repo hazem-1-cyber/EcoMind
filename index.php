@@ -1,89 +1,44 @@
 <?php
-// index.php
+// index.php - Entry point with proper OOP MVC architecture
 session_start();
 
 require_once 'config.php';
 
-// simple autoload controllers
+// Autoload Core classes
 spl_autoload_register(function($class){
-    $paths = ['Controller/'.$class.'.php','Model/'.$class.'.php'];
+    $paths = [
+        'Core/'.$class.'.php',
+        'Controller/'.$class.'.php',
+        'Model/'.$class.'.php',
+        'Entity/'.$class.'.php',
+        'Service/'.$class.'.php'
+    ];
     foreach($paths as $p) {
-        if (file_exists($p)) require_once $p;
+        if (file_exists($p)) {
+            require_once $p;
+            return;
+        }
     }
 });
 
-$page = $_GET['page'] ?? 'events';
-$action = $_GET['action'] ?? null;
-$id = $_GET['id'] ?? null;
+// Create Request object
+$request = new Request();
 
-switch ($page) {
-    case 'events':
-        $c = new EvenementController();
-        if ($id) $c->show($id);
-        else $c->index();
-        break;
+// Create Router
+$router = new Router($request);
 
-    case 'proposer':
-        // form and submit
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            require_once 'Model/Proposition.php';
-            $prop = new Proposition();
-            $data = [
-                'association_nom' => $_POST['association_nom'] ?? '',
-                'email_contact' => $_POST['email_contact'] ?? '',
-                'tel' => $_POST['tel'] ?? '',
-                'type' => $_POST['type'] ?? '',
-                'description' => $_POST['description'] ?? ''
-            ];
-            $prop->create($data);
-            header('Location: index.php?page=events&msg=proposition_ok');
-            exit;
-        } else {
-            require_once 'View/templates/header.php';
-            require_once 'View/templates/navbar.php';
-            require_once 'View/FrontOffice/proposer_event.php';
-            require_once 'View/templates/footer.php';
-        }
-        break;
+// Define routes
+$router->any('events', 'EvenementController', 'index');
+$router->any('event_detail', 'EvenementController', 'show');
+$router->any('proposer', 'ProposerController', 'index');
+$router->any('inscription', 'InscriptionController', 'index');
 
-    case 'inscription':
-        $ic = new InscriptionController();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $ic->submit();
-        } else {
-            if (!$id) { echo "Événement introuvable."; exit; }
-            $ic->form($id);
-        }
-        break;
+// Admin routes
+$router->any('admin', 'AdminController', 'dashboard');
+$router->any('admin_dashboard', 'AdminController', 'dashboard');
+$router->any('admin_events', 'AdminController', 'events');
+$router->any('admin_inscriptions', 'AdminController', 'inscriptions');
+$router->any('admin_propositions', 'AdminController', 'propositions');
 
-    case 'admin':
-        // Redirect to dashboard
-        $ac = new AdminController();
-        $ac->dashboard();
-        break;
-
-    case 'admin_dashboard':
-        $ac = new AdminController();
-        $ac->dashboard();
-        break;
-
-    case 'admin_events':
-        $ac = new AdminController();
-        $ac->events();
-        break;
-
-    case 'admin_inscriptions':
-        $ac = new AdminController();
-        $ac->inscriptions();
-        break;
-
-    case 'admin_propositions':
-        $ac = new AdminController();
-        $ac->propositions();
-        break;
-
-    default:
-        // page not found -> redirect to events
-        header('Location: index.php?page=events');
-        break;
-}
+// Dispatch the request
+$router->dispatch();

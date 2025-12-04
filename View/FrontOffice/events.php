@@ -5,16 +5,16 @@
     <div class="events-grid">
         <?php foreach ($events as $ev): ?>
             <div class="event-card">
-                <a href="index.php?page=events&id=<?= $ev['id'] ?>">
-                    <img src="<?= htmlspecialchars($ev['image_main']) ?>" 
-                         alt="<?= htmlspecialchars($ev['titre']) ?>" 
+                <a href="index.php?page=event_detail&id=<?= $ev->getId() ?>">
+                    <img src="<?= htmlspecialchars($ev->getImageMain()) ?>" 
+                         alt="<?= htmlspecialchars($ev->getTitre()) ?>" 
                          class="event-thumb">
                 </a>
 
-                <h3 class="event-title"><?= htmlspecialchars($ev['titre']) ?></h3>
+                <h3 class="event-title"><?= htmlspecialchars($ev->getTitre()) ?></h3>
 
                 <a class="btn-savoir-plus" 
-                   href="index.php?page=events&id=<?= $ev['id'] ?>">
+                   href="index.php?page=event_detail&id=<?= $ev->getId() ?>">
                    Savoir plus
                 </a>
             </div>

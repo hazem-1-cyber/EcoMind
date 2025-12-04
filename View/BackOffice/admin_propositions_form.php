@@ -65,27 +65,27 @@ $pageTitle = $isEdit ? 'Modifier une proposition' : 'Ajouter une proposition';
         <form method="POST" class="admin-form">
             <div class="form-group">
                 <label>Nom de l'association*</label>
-                <input type="text" name="association_nom" value="<?= $isEdit ? htmlspecialchars($proposition['association_nom']) : '' ?>" required>
+                <input type="text" name="association_nom" value="<?= $isEdit ? htmlspecialchars($proposition->getAssociationNom()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Email de contact*</label>
-                <input type="email" name="email_contact" value="<?= $isEdit ? htmlspecialchars($proposition['email_contact']) : '' ?>" required>
+                <input type="email" name="email_contact" value="<?= $isEdit ? htmlspecialchars($proposition->getEmailContact()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Téléphone*</label>
-                <input type="text" name="tel" value="<?= $isEdit ? htmlspecialchars($proposition['tel']) : '' ?>" required>
+                <input type="text" name="tel" value="<?= $isEdit ? htmlspecialchars($proposition->getTel()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Type d'événement*</label>
-                <input type="text" name="type" value="<?= $isEdit ? htmlspecialchars($proposition['type']) : '' ?>" required>
+                <input type="text" name="type" value="<?= $isEdit ? htmlspecialchars($proposition->getType()) : '' ?>" required>
             </div>
 
             <div class="form-group">
                 <label>Description*</label>
-                <textarea name="description" rows="6" required><?= $isEdit ? htmlspecialchars($proposition['description']) : '' ?></textarea>
+                <textarea name="description" rows="6" required><?= $isEdit ? htmlspecialchars($proposition->getDescription()) : '' ?></textarea>
             </div>
 
             <div class="form-actions">

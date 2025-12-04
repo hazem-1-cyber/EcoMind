@@ -3,197 +3,271 @@
 require_once __DIR__ . '/../Model/Evenement.php';
 require_once __DIR__ . '/../Model/Inscription.php';
 require_once __DIR__ . '/../Model/Proposition.php';
+require_once __DIR__ . '/../Service/DashboardService.php';
+require_once __DIR__ . '/../Core/View.php';
+require_once __DIR__ . '/../Core/Response.php';
 
 class AdminController {
+    private $request;
     private $evenementModel;
     private $inscriptionModel;
     private $propositionModel;
+    private $dashboardService;
 
-    public function __construct() {
+    public function __construct(Request $request) {
+        $this->request = $request;
         $this->evenementModel = new Evenement();
         $this->inscriptionModel = new Inscription();
         $this->propositionModel = new Proposition();
+        $this->dashboardService = new DashboardService(
+            $this->evenementModel,
+            $this->inscriptionModel,
+            $this->propositionModel
+        );
     }
 
+    /**
+     * Display dashboard
+     */
     public function dashboard() {
-        // Handle deletes from dashboard
-        if (isset($_GET['delete_event'])) {
-            $this->evenementModel->delete($_GET['delete_event']);
-            header('Location: index.php?page=admin_dashboard');
-            exit;
-        }
-        if (isset($_GET['delete_inscription'])) {
-            $this->inscriptionModel->delete($_GET['delete_inscription']);
-            header('Location: index.php?page=admin_dashboard');
-            exit;
-        }
-        if (isset($_GET['delete_proposition'])) {
-            $this->propositionModel->delete($_GET['delete_proposition']);
-            header('Location: index.php?page=admin_dashboard');
-            exit;
+        // Handle delete actions
+        if ($this->request->has('delete_event')) {
+            $this->evenementModel->delete($this->request->get('delete_event'));
+            $response = new Response();
+            $response->redirect('index.php?page=admin_dashboard');
+            return;
         }
         
-        $events = $this->evenementModel->getAll();
-        $inscriptions = $this->inscriptionModel->getAll();
-        $propositions = $this->propositionModel->getAll();
+        if ($this->request->has('delete_inscription')) {
+            $this->inscriptionModel->delete($this->request->get('delete_inscription'));
+            $response = new Response();
+            $response->redirect('index.php?page=admin_dashboard');
+            return;
+        }
         
-        require __DIR__ . '/../View/BackOffice/dashboard.php';
+        if ($this->request->has('delete_proposition')) {
+            $this->propositionModel->delete($this->request->get('delete_proposition'));
+            $response = new Response();
+            $response->redirect('index.php?page=admin_dashboard');
+            return;
+        }
+
+        // Get dashboard data from service
+        $data = $this->dashboardService->getDashboardData();
+        
+        // Render view
+        $view = View::make(__DIR__ . '/../View/BackOffice/dashboard.php', $data);
+        $content = $view->render();
+        
+        $response = new Response($content);
+        $response->send();
     }
 
+    /**
+     * Manage events (add/edit)
+     */
     public function events() {
         // Handle delete
-        if (isset($_GET['delete'])) {
-            $this->evenementModel->delete($_GET['delete']);
-            header('Location: index.php?page=admin_events');
-            exit;
+        if ($this->request->has('delete')) {
+            $this->evenementModel->delete($this->request->get('delete'));
+            $response = new Response();
+            $response->redirect('index.php?page=admin_events');
+            return;
         }
 
         // Handle edit
-        if (isset($_GET['edit'])) {
-            $event = $this->evenementModel->getById($_GET['edit']);
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = [
-                    'titre' => $_POST['titre'],
-                    'description' => $_POST['description'],
-                    'type' => $_POST['type'],
-                    'image_main' => $_POST['image_main'],
-                    'image_second' => $_POST['image_second']
-                ];
-                $this->evenementModel->update($_GET['edit'], $data);
-                header('Location: index.php?page=admin_dashboard#events');
-                exit;
+        if ($this->request->has('edit')) {
+            $event = $this->evenementModel->getById($this->request->get('edit'));
+            
+            if ($this->request->isPost()) {
+                $event->setTitre($this->request->post('titre'))
+                      ->setDescription($this->request->post('description'))
+                      ->setType($this->request->post('type'))
+                      ->setImageMain($this->request->post('image_main'))
+                      ->setImageSecond($this->request->post('image_second'));
+                
+                $this->evenementModel->update($event);
+                
+                $response = new Response();
+                $response->redirect('index.php?page=admin_dashboard#events');
+                return;
             }
-            require __DIR__ . '/../View/BackOffice/admin_events_form.php';
-            exit;
+            
+            $view = View::make(__DIR__ . '/../View/BackOffice/admin_events_form.php', ['event' => $event]);
+            $content = $view->render();
+            $response = new Response($content);
+            $response->send();
+            return;
         }
 
         // Handle add
-        if (isset($_GET['add'])) {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = [
-                    'titre' => $_POST['titre'],
-                    'description' => $_POST['description'],
-                    'type' => $_POST['type'],
-                    'image_main' => $_POST['image_main'],
-                    'image_second' => $_POST['image_second']
-                ];
-                $this->evenementModel->create($data);
-                header('Location: index.php?page=admin_dashboard#events');
-                exit;
+        if ($this->request->has('add')) {
+            if ($this->request->isPost()) {
+                $event = new EvenementEntity();
+                $event->setTitre($this->request->post('titre'))
+                      ->setDescription($this->request->post('description'))
+                      ->setType($this->request->post('type'))
+                      ->setImageMain($this->request->post('image_main'))
+                      ->setImageSecond($this->request->post('image_second'));
+                
+                $this->evenementModel->create($event);
+                
+                $response = new Response();
+                $response->redirect('index.php?page=admin_dashboard#events');
+                return;
             }
-            $event = null;
-            require __DIR__ . '/../View/BackOffice/admin_events_form.php';
-            exit;
+            
+            $view = View::make(__DIR__ . '/../View/BackOffice/admin_events_form.php', ['event' => null]);
+            $content = $view->render();
+            $response = new Response($content);
+            $response->send();
+            return;
         }
 
         // Redirect to dashboard
-        header('Location: index.php?page=admin_dashboard');
-        exit;
+        $response = new Response();
+        $response->redirect('index.php?page=admin_dashboard');
     }
 
+    /**
+     * Manage inscriptions (add/edit)
+     */
     public function inscriptions() {
         // Handle delete
-        if (isset($_GET['delete'])) {
-            $this->inscriptionModel->delete($_GET['delete']);
-            header('Location: index.php?page=admin_inscriptions');
-            exit;
+        if ($this->request->has('delete')) {
+            $this->inscriptionModel->delete($this->request->get('delete'));
+            $response = new Response();
+            $response->redirect('index.php?page=admin_inscriptions');
+            return;
         }
 
         // Handle edit
-        if (isset($_GET['edit'])) {
-            $inscription = $this->inscriptionModel->getById($_GET['edit']);
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = [
-                    'evenement_id' => $_POST['evenement_id'],
-                    'nom' => $_POST['nom'],
-                    'prenom' => $_POST['prenom'],
-                    'age' => $_POST['age'],
-                    'email' => $_POST['email'],
-                    'tel' => $_POST['tel']
-                ];
-                $this->inscriptionModel->update($_GET['edit'], $data);
-                header('Location: index.php?page=admin_dashboard#inscriptions');
-                exit;
+        if ($this->request->has('edit')) {
+            $inscription = $this->inscriptionModel->getById($this->request->get('edit'));
+            
+            if ($this->request->isPost()) {
+                $inscription->setEvenementId($this->request->post('evenement_id'))
+                           ->setNom($this->request->post('nom'))
+                           ->setPrenom($this->request->post('prenom'))
+                           ->setAge($this->request->post('age'))
+                           ->setEmail($this->request->post('email'))
+                           ->setTel($this->request->post('tel'));
+                
+                $this->inscriptionModel->update($inscription);
+                
+                $response = new Response();
+                $response->redirect('index.php?page=admin_dashboard#inscriptions');
+                return;
             }
+            
             $events = $this->evenementModel->getAll();
-            require __DIR__ . '/../View/BackOffice/admin_inscriptions_form.php';
-            exit;
+            $view = View::make(__DIR__ . '/../View/BackOffice/admin_inscriptions_form.php', [
+                'inscription' => $inscription,
+                'events' => $events
+            ]);
+            $content = $view->render();
+            $response = new Response($content);
+            $response->send();
+            return;
         }
 
         // Handle add
-        if (isset($_GET['add'])) {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = [
-                    'evenement_id' => $_POST['evenement_id'],
-                    'nom' => $_POST['nom'],
-                    'prenom' => $_POST['prenom'],
-                    'age' => $_POST['age'],
-                    'email' => $_POST['email'],
-                    'tel' => $_POST['tel']
-                ];
-                $this->inscriptionModel->create($data);
-                header('Location: index.php?page=admin_dashboard#inscriptions');
-                exit;
+        if ($this->request->has('add')) {
+            if ($this->request->isPost()) {
+                $inscription = new InscriptionEntity();
+                $inscription->setEvenementId($this->request->post('evenement_id'))
+                           ->setNom($this->request->post('nom'))
+                           ->setPrenom($this->request->post('prenom'))
+                           ->setAge($this->request->post('age'))
+                           ->setEmail($this->request->post('email'))
+                           ->setTel($this->request->post('tel'));
+                
+                $this->inscriptionModel->create($inscription);
+                
+                $response = new Response();
+                $response->redirect('index.php?page=admin_dashboard#inscriptions');
+                return;
             }
-            $inscription = null;
+            
             $events = $this->evenementModel->getAll();
-            require __DIR__ . '/../View/BackOffice/admin_inscriptions_form.php';
-            exit;
+            $view = View::make(__DIR__ . '/../View/BackOffice/admin_inscriptions_form.php', [
+                'inscription' => null,
+                'events' => $events
+            ]);
+            $content = $view->render();
+            $response = new Response($content);
+            $response->send();
+            return;
         }
 
         // Redirect to dashboard
-        header('Location: index.php?page=admin_dashboard');
-        exit;
+        $response = new Response();
+        $response->redirect('index.php?page=admin_dashboard');
     }
 
+    /**
+     * Manage propositions (add/edit)
+     */
     public function propositions() {
         // Handle delete
-        if (isset($_GET['delete'])) {
-            $this->propositionModel->delete($_GET['delete']);
-            header('Location: index.php?page=admin_propositions');
-            exit;
+        if ($this->request->has('delete')) {
+            $this->propositionModel->delete($this->request->get('delete'));
+            $response = new Response();
+            $response->redirect('index.php?page=admin_propositions');
+            return;
         }
 
         // Handle edit
-        if (isset($_GET['edit'])) {
-            $proposition = $this->propositionModel->getById($_GET['edit']);
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = [
-                    'association_nom' => $_POST['association_nom'],
-                    'email_contact' => $_POST['email_contact'],
-                    'tel' => $_POST['tel'],
-                    'type' => $_POST['type'],
-                    'description' => $_POST['description']
-                ];
-                $this->propositionModel->update($_GET['edit'], $data);
-                header('Location: index.php?page=admin_dashboard#propositions');
-                exit;
+        if ($this->request->has('edit')) {
+            $proposition = $this->propositionModel->getById($this->request->get('edit'));
+            
+            if ($this->request->isPost()) {
+                $proposition->setAssociationNom($this->request->post('association_nom'))
+                           ->setEmailContact($this->request->post('email_contact'))
+                           ->setTel($this->request->post('tel'))
+                           ->setType($this->request->post('type'))
+                           ->setDescription($this->request->post('description'));
+                
+                $this->propositionModel->update($proposition);
+                
+                $response = new Response();
+                $response->redirect('index.php?page=admin_dashboard#propositions');
+                return;
             }
-            require __DIR__ . '/../View/BackOffice/admin_propositions_form.php';
-            exit;
+            
+            $view = View::make(__DIR__ . '/../View/BackOffice/admin_propositions_form.php', ['proposition' => $proposition]);
+            $content = $view->render();
+            $response = new Response($content);
+            $response->send();
+            return;
         }
 
         // Handle add
-        if (isset($_GET['add'])) {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = [
-                    'association_nom' => $_POST['association_nom'],
-                    'email_contact' => $_POST['email_contact'],
-                    'tel' => $_POST['tel'],
-                    'type' => $_POST['type'],
-                    'description' => $_POST['description']
-                ];
-                $this->propositionModel->create($data);
-                header('Location: index.php?page=admin_dashboard#propositions');
-                exit;
+        if ($this->request->has('add')) {
+            if ($this->request->isPost()) {
+                $proposition = new PropositionEntity();
+                $proposition->setAssociationNom($this->request->post('association_nom'))
+                           ->setEmailContact($this->request->post('email_contact'))
+                           ->setTel($this->request->post('tel'))
+                           ->setType($this->request->post('type'))
+                           ->setDescription($this->request->post('description'));
+                
+                $this->propositionModel->create($proposition);
+                
+                $response = new Response();
+                $response->redirect('index.php?page=admin_dashboard#propositions');
+                return;
             }
-            $proposition = null;
-            require __DIR__ . '/../View/BackOffice/admin_propositions_form.php';
-            exit;
+            
+            $view = View::make(__DIR__ . '/../View/BackOffice/admin_propositions_form.php', ['proposition' => null]);
+            $content = $view->render();
+            $response = new Response($content);
+            $response->send();
+            return;
         }
 
         // Redirect to dashboard
-        header('Location: index.php?page=admin_dashboard');
-        exit;
+        $response = new Response();
+        $response->redirect('index.php?page=admin_dashboard');
     }
 }
