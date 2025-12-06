@@ -261,6 +261,120 @@ class DonationChatbot {
         this.showInput();
     }
 
+    async askPhoto() {
+        console.log('askPhoto appelée - currentStep:', this.currentStep);
+        this.currentStep = 14;
+        
+        await this.delay(500);
+        this.showTyping();
+        await this.delay(800);
+        this.hideTyping();
+        
+        const options = [
+            {
+                text: "Oui, j'ai une photo",
+                action: () => this.handlePhotoResponse(true)
+            },
+            {
+                text: "Non, je n'ai pas de photo",
+                action: () => this.handlePhotoResponse(false)
+            }
+        ];
+        this.addMessage("📸 Avez-vous une photo de votre produit à ajouter ?", true, options);
+        await this.delay(300);
+        this.scrollToBottom();
+    }
+
+    async handlePhotoResponse(hasPhoto) {
+        if (hasPhoto) {
+            this.addMessage("Oui, j'ai une photo", false);
+            await this.delay(500);
+            this.scrollToBottom();
+            this.showTyping();
+            await this.delay(800);
+            this.hideTyping();
+            this.addMessage("Super ! Veuillez ajouter votre photo maintenant. 📷", true);
+            await this.delay(500);
+            this.scrollToBottom();
+            
+            // Trouver le champ d'upload d'image
+            const imageInput = document.getElementById('image-don');
+            const imageUploadBox = document.getElementById('image-upload-box');
+            
+            if (imageInput && imageUploadBox) {
+                // Scroller vers le champ d'upload
+                imageUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Attendre que l'utilisateur ajoute une photo
+                this.waitForPhotoUpload(imageInput, imageUploadBox);
+            } else {
+                // Si le champ n'existe pas, continuer
+                await this.delay(500);
+                this.askAssociation();
+            }
+        } else {
+            this.addMessage("Non, je n'ai pas de photo", false);
+            await this.delay(500);
+            this.scrollToBottom();
+            this.showTyping();
+            await this.delay(800);
+            this.hideTyping();
+            this.addMessage("Pas de problème ! Vous pouvez continuer sans photo. ✅", true);
+            await this.delay(500);
+            this.scrollToBottom();
+            await this.delay(500);
+            this.askAssociation();
+        }
+    }
+
+    waitForPhotoUpload(imageInput, imageUploadBox) {
+        // Créer un bouton pour continuer après l'upload
+        const continueBtn = document.createElement('button');
+        continueBtn.textContent = "J'ai ajouté ma photo, continuer ➡️";
+        continueBtn.className = 'btn btn-primary';
+        continueBtn.style.marginTop = '15px';
+        continueBtn.style.display = 'none';
+        continueBtn.style.width = '100%';
+        continueBtn.style.padding = '12px';
+        continueBtn.style.fontSize = '16px';
+        
+        // Ajouter le bouton après le conteneur d'upload
+        const imageContainer = imageUploadBox.parentElement;
+        if (imageContainer) {
+            imageContainer.appendChild(continueBtn);
+        }
+        
+        // Écouter le changement de fichier
+        const photoChangeHandler = async () => {
+            if (imageInput.files && imageInput.files[0]) {
+                continueBtn.style.display = 'block';
+                continueBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+        
+        imageInput.addEventListener('change', photoChangeHandler);
+        
+        // Quand l'utilisateur clique sur continuer
+        continueBtn.onclick = async () => {
+            continueBtn.remove();
+            imageInput.removeEventListener('change', photoChangeHandler);
+            
+            // Scroller vers le chatbot
+            document.getElementById('chatbot-window').scrollTo({ top: 0, behavior: 'smooth' });
+            
+            await this.delay(500);
+            this.showTyping();
+            await this.delay(800);
+            this.hideTyping();
+            this.addMessage("Photo ajoutée avec succès ! ✅", true);
+            await this.delay(500);
+            this.scrollToBottom();
+            
+            await this.delay(500);
+            this.askAssociation();
+        };
+    }
+
     async askAssociation() {
         this.currentStep = 20;
         
@@ -395,12 +509,14 @@ class DonationChatbot {
                 break;
                 
             case 13:
+                console.log('Case 13 - Description:', value);
                 if (value.length >= 10) {
                     this.donationData.description = value;
                     document.getElementById('description-don').value = value;
                     await this.delay(300);
                     this.scrollToBottom();
-                    this.askAssociation();
+                    console.log('Appel de askPhoto()');
+                    this.askPhoto();
                 } else {
                     this.addMessage("La description doit contenir au moins 10 caractères.", true);
                     await this.delay(300);
