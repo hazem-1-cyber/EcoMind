@@ -262,7 +262,6 @@ class DonationChatbot {
     }
 
     async askPhoto() {
-        console.log('askPhoto appelée - currentStep:', this.currentStep);
         this.currentStep = 14;
         
         await this.delay(500);
@@ -509,13 +508,11 @@ class DonationChatbot {
                 break;
                 
             case 13:
-                console.log('Case 13 - Description:', value);
                 if (value.length >= 10) {
                     this.donationData.description = value;
                     document.getElementById('description-don').value = value;
                     await this.delay(300);
                     this.scrollToBottom();
-                    console.log('Appel de askPhoto()');
                     this.askPhoto();
                 } else {
                     this.addMessage("La description doit contenir au moins 10 caractères.", true);

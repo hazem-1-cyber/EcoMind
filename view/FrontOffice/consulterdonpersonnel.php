@@ -5,6 +5,165 @@ $additionalCSS = ['style.css', 'https://cdnjs.cloudflare.com/ajax/libs/font-awes
 
 // Inclure le header
 include __DIR__ . '/includes/header.php';
+?>
+
+<!-- Animation de feuilles qui tombent -->
+<div class="falling-leaves" id="fallingLeaves"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const leavesContainer = document.getElementById('fallingLeaves');
+  const leafEmojis = ['🌿', '🍃'];
+  const numberOfLeaves = 20;
+
+  function createLeaf() {
+    const leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.textContent = leafEmojis[Math.floor(Math.random() * leafEmojis.length)];
+    
+    leaf.style.left = Math.random() * 100 + '%';
+    const duration = Math.random() * 7 + 8;
+    leaf.style.animationDuration = duration + 's';
+    const delay = Math.random() * 5;
+    leaf.style.animationDelay = delay + 's';
+    const size = Math.random() * 20 + 20;
+    leaf.style.fontSize = size + 'px';
+    
+    leavesContainer.appendChild(leaf);
+    
+    setTimeout(() => {
+      leaf.remove();
+      createLeaf();
+    }, (duration + delay) * 1000);
+  }
+
+  for (let i = 0; i < numberOfLeaves; i++) {
+    setTimeout(() => createLeaf(), i * 300);
+  }
+});
+</script>
+
+<style>
+/* Animation des feuilles qui tombent */
+.falling-leaves {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.leaf {
+  position: absolute;
+  top: -50px;
+  font-size: 30px;
+  animation: fall linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Animation de la carte principale */
+.form-card {
+  animation: slideInDown 0.6s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation des cartes de dons */
+.don-card {
+  animation: fadeInUp 0.5s ease-out;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.don-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(44, 95, 45, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation du bouton */
+.submit-btn {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.submit-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(44, 95, 45, 0.3);
+}
+
+/* Animation de l'icône no-results */
+.no-results-icon {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Animation du titre */
+.results-section h2 {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+</style>
+
+<?php
 
 require_once __DIR__ . "/../../controller/DonController.php";
 

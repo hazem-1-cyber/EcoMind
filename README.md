@@ -51,10 +51,55 @@ Accédez à la page **Paramètres** pour configurer :
 ```
 
 ## 🚀 Installation
-1. Importer `database.sql` dans votre base MySQL
-2. Configurer les clés Stripe dans `config.php`
-3. Vérifier les permissions du dossier `config/`
-4. Accéder à l'interface via votre serveur web
+
+### 1. Base de données
+Importer le fichier `database.sql` dans votre base MySQL :
+```bash
+mysql -u root -p ecomind < database.sql
+```
+
+### 2. Configuration de l'environnement
+Créer un fichier `.env` à la racine du projet en copiant `.env.example` :
+```bash
+cp .env.example .env
+```
+
+Puis éditer le fichier `.env` avec vos propres clés :
+```env
+# Configuration Stripe (Clés de test)
+STRIPE_PUBLIC_KEY=pk_test_VOTRE_CLE_PUBLIQUE_STRIPE
+STRIPE_SECRET_KEY=sk_test_VOTRE_CLE_SECRETE_STRIPE
+
+# Configuration Base de données
+DB_HOST=localhost
+DB_NAME=ecomind
+DB_USER=root
+DB_PASS=
+```
+
+**⚠️ Important :** 
+- Ne jamais commiter le fichier `.env` dans Git
+- Utiliser uniquement les clés de TEST Stripe pour le développement
+- Obtenir vos clés Stripe sur : https://dashboard.stripe.com/test/apikeys
+
+### 3. Dépendances PHP
+Installer les dépendances avec Composer :
+```bash
+composer install
+```
+
+### 4. Permissions
+Vérifier les permissions des dossiers :
+```bash
+chmod 755 config/
+chmod 666 config/settings.json
+chmod 755 uploads/
+```
+
+### 5. Accès
+Accéder à l'interface via votre serveur web :
+- FrontOffice : `http://localhost/ecomind/view/FrontOffice/`
+- BackOffice : `http://localhost/ecomind/view/BackOffice/`
 
 ## 💳 Mode Test Stripe
 Utilisez ces cartes de test :
