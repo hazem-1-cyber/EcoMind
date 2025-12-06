@@ -671,7 +671,7 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                         <strong style="color: #666;">Ville:</strong> ${don.ville}<br>
                         ${don.cp ? `<strong style="color: #666;">Code postal:</strong> ${don.cp}<br>` : ''}
                         ${don.tel ? `<strong style="color: #666;">Téléphone:</strong> ${don.tel}<br>` : ''}
-                        ${don.localisation ? `<strong style="color: #666;">Localisation:</strong> <a href="${don.localisation}" target="_blank">Voir sur la carte</a><br>` : ''}
+                        ${don.localisation ? `<strong style="color: #666;">Localisation:</strong> ${don.localisation}<br>` : ''}
                     </div>
                 ` : ''}
                 
