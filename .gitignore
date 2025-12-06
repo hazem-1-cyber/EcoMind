@@ -1,0 +1,22 @@
+# Environment variables
+.env
+
+# Vendor directory
+vendor/
+
+# Uploads
+uploads/dons/*.png
+uploads/dons/*.jpg
+uploads/dons/*.jpeg
+uploads/receipts/*.pdf
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

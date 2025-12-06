@@ -1,0 +1,68 @@
+# EcoMind - Plateforme de Dons Écologiques
+
+## 🌱 Description
+Plateforme web permettant de gérer des dons (monétaires et matériels) pour des associations écologiques tunisiennes.
+
+## ⚙️ Fonctionnalités Principales
+
+### Système de Paramètres en Temps Réel
+- **Validation automatique des dons monétaires** : 
+  - Quand activé : tous les dons monétaires en attente sont validés automatiquement
+  - Les nouveaux dons monétaires sont validés directement après paiement
+  - Quand désactivé : les dons restent en attente et nécessitent une validation manuelle
+
+- **Montant minimum configurable** : Définir le montant minimum accepté (en TND)
+- **Notifications** : Activer/désactiver les notifications par email
+
+### Types de Dons
+- **Dons monétaires** : Paiement en ligne via Stripe (TND uniquement)
+- **Panneaux solaires** : Don de matériel écologique
+- **Matériel** : Don d'équipements divers
+- **Autre** : Autres types de dons avec description
+
+## 🔧 Configuration
+
+### Paramètres (BackOffice)
+Accédez à la page **Paramètres** pour configurer :
+1. Montant minimum de don (TND)
+2. Validation automatique des dons monétaires
+3. Préférences de notifications
+
+### Paiement Stripe
+- Mode TEST pour développement/démonstration
+- Devise fixe : TND (Dinar Tunisien)
+- Paiement sécurisé via Stripe
+
+## 📁 Structure
+```
+├── config/
+│   ├── SettingsManager.php    # Gestion des paramètres
+│   └── settings.json           # Fichier de configuration
+├── controller/
+│   ├── DonController.php       # Logique des dons
+│   └── categorieController.php
+├── model/
+│   ├── DonModel.php           # Modèle de données
+│   └── ParametreModel.php
+├── view/
+│   ├── BackOffice/            # Interface admin
+│   └── FrontOffice/           # Interface publique
+└── database.sql               # Structure de la base
+```
+
+## 🚀 Installation
+1. Importer `database.sql` dans votre base MySQL
+2. Configurer les clés Stripe dans `config.php`
+3. Vérifier les permissions du dossier `config/`
+4. Accéder à l'interface via votre serveur web
+
+## 💳 Mode Test Stripe
+Utilisez ces cartes de test :
+- Succès : `4242 4242 4242 4242`
+- Date : `12/25`
+- CVC : `123`
+
+## 📝 Notes
+- Projet étudiant - Mode TEST uniquement
+- Devise fixe : TND (Tunisie)
+- Validation automatique configurable en temps réel
