@@ -1,128 +1,108 @@
 <?php
 // Model/Inscription.php
-require_once 'Database.php';
-require_once __DIR__ . '/../Entity/InscriptionEntity.php';
 
+/**
+ * Classe Inscription - Représente une inscription
+ */
 class Inscription {
-    private $pdo;
+    // Propriétés privées (encapsulation)
+    private $id;
+    private $evenementId;
+    private $nom;
+    private $prenom;
+    private $age;
+    private $email;
+    private $tel;
+    private $dateInscription;
 
-    public function __construct() {
-        $this->pdo = Database::getPdo();
+    // ========== GETTERS ==========
+    
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getEvenementId() {
+        return $this->evenementId;
+    }
+
+    public function getNom() {
+        return $this->nom;
+    }
+
+    public function getPrenom() {
+        return $this->prenom;
+    }
+
+    public function getAge() {
+        return $this->age;
+    }
+
+    public function getEmail() {
+        return $this->email;
+    }
+
+    public function getTel() {
+        return $this->tel;
+    }
+
+    public function getDateInscription() {
+        return $this->dateInscription;
+    }
+
+    // ========== SETTERS ==========
+    
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function setEvenementId($evenementId) {
+        $this->evenementId = $evenementId;
+        return $this;
+    }
+
+    public function setNom($nom) {
+        $this->nom = $nom;
+        return $this;
+    }
+
+    public function setPrenom($prenom) {
+        $this->prenom = $prenom;
+        return $this;
+    }
+
+    public function setAge($age) {
+        $this->age = $age;
+        return $this;
+    }
+
+    public function setEmail($email) {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function setTel($tel) {
+        $this->tel = $tel;
+        return $this;
+    }
+
+    public function setDateInscription($dateInscription) {
+        $this->dateInscription = $dateInscription;
+        return $this;
     }
 
     /**
-     * Get all inscriptions as Entity objects
-     * @return InscriptionEntity[]
+     * Hydrater l'objet à partir d'un tableau
      */
-    public function getAll() {
-        $stmt = $this->pdo->query("SELECT * FROM inscription ORDER BY date_inscription DESC");
-        $results = $stmt->fetchAll();
-        
-        $entities = [];
-        foreach ($results as $row) {
-            $entities[] = new InscriptionEntity($row);
-        }
-        return $entities;
-    }
-
-    /**
-     * Get inscription by ID as Entity object
-     * @param int $id
-     * @return InscriptionEntity|null
-     */
-    public function getById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM inscription WHERE id = ?");
-        $stmt->execute([$id]);
-        $result = $stmt->fetch();
-        
-        return $result ? new InscriptionEntity($result) : null;
-    }
-
-    /**
-     * Get inscriptions by event ID
-     * @param int $eventId
-     * @return InscriptionEntity[]
-     */
-    public function getByEvent($eventId) {
-        $stmt = $this->pdo->prepare("SELECT * FROM inscription WHERE evenement_id = ? ORDER BY date_inscription DESC");
-        $stmt->execute([$eventId]);
-        $results = $stmt->fetchAll();
-        
-        $entities = [];
-        foreach ($results as $row) {
-            $entities[] = new InscriptionEntity($row);
-        }
-        return $entities;
-    }
-
-    /**
-     * Create new inscription from Entity
-     * @param InscriptionEntity $entity
-     * @return bool
-     */
-    public function create(InscriptionEntity $entity) {
-        $stmt = $this->pdo->prepare("INSERT INTO inscription (evenement_id, nom, prenom, age, email, tel) VALUES (?, ?, ?, ?, ?, ?)");
-        $result = $stmt->execute([
-            $entity->getEvenementId(),
-            $entity->getNom(),
-            $entity->getPrenom(),
-            $entity->getAge(),
-            $entity->getEmail(),
-            $entity->getTel()
-        ]);
-        
-        if ($result) {
-            $entity->setId($this->pdo->lastInsertId());
-        }
-        
-        return $result;
-    }
-
-    /**
-     * Update inscription from Entity
-     * @param InscriptionEntity $entity
-     * @return bool
-     */
-    public function update(InscriptionEntity $entity) {
-        $stmt = $this->pdo->prepare("UPDATE inscription SET evenement_id=?, nom=?, prenom=?, age=?, email=?, tel=? WHERE id=?");
-        return $stmt->execute([
-            $entity->getEvenementId(),
-            $entity->getNom(),
-            $entity->getPrenom(),
-            $entity->getAge(),
-            $entity->getEmail(),
-            $entity->getTel(),
-            $entity->getId()
-        ]);
-    }
-
-    /**
-     * Delete inscription by ID
-     * @param int $id
-     * @return bool
-     */
-    public function delete($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM inscription WHERE id = ?");
-        return $stmt->execute([$id]);
-    }
-
-    /**
-     * Count total inscriptions
-     * @return int
-     */
-    public function count() {
-        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM inscription");
-        return (int) $stmt->fetch()['total'];
-    }
-
-    /**
-     * Count inscriptions for today
-     * @return int
-     */
-    public function countToday() {
-        $today = date('Y-m-d');
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as total FROM inscription WHERE DATE(date_inscription) = ?");
-        $stmt->execute([$today]);
-        return (int) $stmt->fetch()['total'];
+    public function hydrate($data) {
+        if (isset($data['id'])) $this->id = $data['id'];
+        if (isset($data['evenement_id'])) $this->evenementId = $data['evenement_id'];
+        if (isset($data['nom'])) $this->nom = $data['nom'];
+        if (isset($data['prenom'])) $this->prenom = $data['prenom'];
+        if (isset($data['age'])) $this->age = $data['age'];
+        if (isset($data['email'])) $this->email = $data['email'];
+        if (isset($data['tel'])) $this->tel = $data['tel'];
+        if (isset($data['date_inscription'])) $this->dateInscription = $data['date_inscription'];
+        return $this;
     }
 }

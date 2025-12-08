@@ -1,32 +1,28 @@
 <?php
-// api/notifications.php - OOP version
+// api/notifications.php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../Model/Database.php';
-require_once __DIR__ . '/../Model/Evenement.php';
-require_once __DIR__ . '/../Model/Inscription.php';
-require_once __DIR__ . '/../Model/Proposition.php';
-require_once __DIR__ . '/../Service/DashboardService.php';
 
 header('Content-Type: application/json');
 
 try {
-    $evenementModel = new Evenement();
-    $inscriptionModel = new Inscription();
-    $propositionModel = new Proposition();
+    $pdo = Database::getPdo();
     
-    $dashboardService = new DashboardService(
-        $evenementModel,
-        $inscriptionModel,
-        $propositionModel
-    );
+    // Compter les inscriptions d'aujourd'hui
+    $today = date('Y-m-d');
+    $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM inscription WHERE DATE(date_inscription) = ?");
+    $stmt->execute([$today]);
+    $inscriptionsToday = (int) $stmt->fetch()['total'];
     
-    $notifications = $dashboardService->getNotifications();
+    // Compter les propositions
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM proposition");
+    $totalPropositions = (int) $stmt->fetch()['total'];
     
     echo json_encode([
         'success' => true,
-        'inscriptionsToday' => $notifications['inscriptionsToday'],
-        'totalPropositions' => $notifications['totalPropositions'],
-        'totalNotifications' => $notifications['totalNotifications']
+        'inscriptionsToday' => $inscriptionsToday,
+        'totalPropositions' => $totalPropositions,
+        'totalNotifications' => $inscriptionsToday + ($totalPropositions > 0 ? 1 : 0)
     ]);
     
 } catch (Exception $e) {

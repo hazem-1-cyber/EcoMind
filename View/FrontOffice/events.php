@@ -5,7 +5,7 @@
     <div class="events-grid">
         <?php foreach ($events as $ev): ?>
             <div class="event-card">
-                <a href="index.php?page=event_detail&id=<?= $ev->getId() ?>">
+                <a href="index.php?page=events&id=<?= $ev->getId() ?>">
                     <img src="<?= htmlspecialchars($ev->getImageMain()) ?>" 
                          alt="<?= htmlspecialchars($ev->getTitre()) ?>" 
                          class="event-thumb">
@@ -14,7 +14,7 @@
                 <h3 class="event-title"><?= htmlspecialchars($ev->getTitre()) ?></h3>
 
                 <a class="btn-savoir-plus" 
-                   href="index.php?page=event_detail&id=<?= $ev->getId() ?>">
+                   href="index.php?page=events&id=<?= $ev->getId() ?>">
                    Savoir plus
                 </a>
             </div>

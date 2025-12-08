@@ -1,17 +1,14 @@
 <?php
-// index.php - Entry point with proper OOP MVC architecture
+// index.php - Point d'entrée MVC
 session_start();
 
 require_once 'config.php';
 
-// Autoload Core classes
+// Autoload des classes
 spl_autoload_register(function($class){
     $paths = [
-        'Core/'.$class.'.php',
         'Controller/'.$class.'.php',
-        'Model/'.$class.'.php',
-        'Entity/'.$class.'.php',
-        'Service/'.$class.'.php'
+        'Model/'.$class.'.php'
     ];
     foreach($paths as $p) {
         if (file_exists($p)) {
@@ -21,24 +18,66 @@ spl_autoload_register(function($class){
     }
 });
 
-// Create Request object
-$request = new Request();
+// Récupérer la page demandée
+$page = $_GET['page'] ?? 'events';
+$id = $_GET['id'] ?? null;
 
-// Create Router
-$router = new Router($request);
+// Router simple
+switch ($page) {
+    case 'events':
+        $controller = new EvenementController();
+        if ($id) {
+            $controller->show($id);
+        } else {
+            $controller->index();
+        }
+        break;
 
-// Define routes
-$router->any('events', 'EvenementController', 'index');
-$router->any('event_detail', 'EvenementController', 'show');
-$router->any('proposer', 'ProposerController', 'index');
-$router->any('inscription', 'InscriptionController', 'index');
+    case 'proposer':
+        $controller = new PropositionController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->submit();
+        } else {
+            $controller->form();
+        }
+        break;
 
-// Admin routes
-$router->any('admin', 'AdminController', 'dashboard');
-$router->any('admin_dashboard', 'AdminController', 'dashboard');
-$router->any('admin_events', 'AdminController', 'events');
-$router->any('admin_inscriptions', 'AdminController', 'inscriptions');
-$router->any('admin_propositions', 'AdminController', 'propositions');
+    case 'inscription':
+        $controller = new InscriptionController();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->submit();
+        } else {
+            if (!$id) {
+                echo "Événement introuvable.";
+                exit;
+            }
+            $controller->form($id);
+        }
+        break;
 
-// Dispatch the request
-$router->dispatch();
+    case 'admin':
+    case 'admin_dashboard':
+        $controller = new AdminController();
+        $controller->dashboard();
+        break;
+
+    case 'admin_events':
+        $controller = new AdminController();
+        $controller->events();
+        break;
+
+    case 'admin_inscriptions':
+        $controller = new AdminController();
+        $controller->inscriptions();
+        break;
+
+    case 'admin_propositions':
+        $controller = new AdminController();
+        $controller->propositions();
+        break;
+
+    default:
+        // Page non trouvée - rediriger vers events
+        header('Location: index.php?page=events');
+        break;
+}

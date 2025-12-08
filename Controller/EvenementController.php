@@ -1,62 +1,79 @@
 <?php
 // Controller/EvenementController.php
+require_once __DIR__ . '/../Model/Database.php';
 require_once __DIR__ . '/../Model/Evenement.php';
-require_once __DIR__ . '/../Core/Response.php';
 
+/**
+ * EvenementController - Contient la logique CRUD pour le FrontOffice
+ */
 class EvenementController {
-    private $request;
-    private $model;
+    private $pdo;
 
-    public function __construct(Request $request) {
-        $this->request = $request;
-        $this->model = new Evenement();
+    public function __construct() {
+        $this->pdo = Database::getPdo();
     }
 
     /**
-     * Display all events
+     * Afficher tous les événements
      */
     public function index() {
-        $events = $this->model->getAll();
+        $events = $this->getAllEvents();
         
-        ob_start();
         require __DIR__ . '/../View/templates/header.php';
         require __DIR__ . '/../View/templates/navbar.php';
         require __DIR__ . '/../View/FrontOffice/events.php';
         require __DIR__ . '/../View/templates/footer.php';
-        $content = ob_get_clean();
-        
-        $response = new Response($content);
-        $response->send();
     }
 
     /**
-     * Display single event detail
+     * Afficher le détail d'un événement
      */
-    public function show() {
-        $id = $this->request->get('id');
-        
-        if (!$id) {
-            $response = new Response();
-            $response->redirect('index.php?page=events');
-            return;
-        }
-        
-        $event = $this->model->getById($id);
+    public function show($id) {
+        $event = $this->getEventById($id);
         
         if (!$event) {
-            $response = new Response('Événement introuvable', 404);
-            $response->send();
-            return;
+            header('HTTP/1.0 404 Not Found');
+            echo "Événement introuvable";
+            exit;
         }
         
-        ob_start();
         require __DIR__ . '/../View/templates/header.php';
         require __DIR__ . '/../View/templates/navbar.php';
         require __DIR__ . '/../View/FrontOffice/event_detail.php';
         require __DIR__ . '/../View/templates/footer.php';
-        $content = ob_get_clean();
+    }
+
+    // ========== CRUD ==========
+
+    /**
+     * READ - Récupérer tous les événements
+     */
+    private function getAllEvents() {
+        $stmt = $this->pdo->query("SELECT * FROM evenement ORDER BY date_creation DESC");
+        $results = $stmt->fetchAll();
         
-        $response = new Response($content);
-        $response->send();
+        $events = [];
+        foreach ($results as $row) {
+            $event = new Evenement();
+            $event->hydrate($row);
+            $events[] = $event;
+        }
+        return $events;
+    }
+
+    /**
+     * READ - Récupérer un événement par ID
+     */
+    private function getEventById($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM evenement WHERE id = ?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+        
+        if ($result) {
+            $event = new Evenement();
+            $event->hydrate($result);
+            return $event;
+        }
+        return null;
     }
 }

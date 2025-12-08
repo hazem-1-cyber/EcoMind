@@ -1,66 +1,76 @@
 <?php
 // Controller/InscriptionController.php
+require_once __DIR__ . '/../Model/Database.php';
 require_once __DIR__ . '/../Model/Inscription.php';
 require_once __DIR__ . '/../Model/Evenement.php';
-require_once __DIR__ . '/../Core/Response.php';
 
+/**
+ * InscriptionController - Contient la logique CRUD pour les inscriptions
+ */
 class InscriptionController {
-    private $request;
-    private $inscriptionModel;
-    private $evenementModel;
+    private $pdo;
 
-    public function __construct(Request $request) {
-        $this->request = $request;
-        $this->inscriptionModel = new Inscription();
-        $this->evenementModel = new Evenement();
+    public function __construct() {
+        $this->pdo = Database::getPdo();
     }
 
     /**
-     * Display inscription form or handle submission
+     * Afficher le formulaire d'inscription
      */
-    public function index() {
-        $eventId = $this->request->get('id');
-        
-        if (!$eventId) {
-            $response = new Response();
-            $response->redirect('index.php?page=events');
-            return;
-        }
-        
-        // Handle form submission
-        if ($this->request->isPost()) {
-            $inscription = new InscriptionEntity();
-            $inscription->setEvenementId($this->request->post('evenement_id'))
-                       ->setNom($this->request->post('nom'))
-                       ->setPrenom($this->request->post('prenom'))
-                       ->setAge($this->request->post('age'))
-                       ->setEmail($this->request->post('email'))
-                       ->setTel($this->request->post('tel'));
-            
-            $this->inscriptionModel->create($inscription);
-            
-            $response = new Response();
-            $response->redirect('index.php?page=events&msg=inscription_ok');
-            return;
-        }
-        
-        // Display form
-        $event = $this->evenementModel->getById($eventId);
+    public function form($eventId) {
+        $event = $this->getEventById($eventId);
         
         if (!$event) {
-            $response = new Response('Événement introuvable', 404);
-            $response->send();
-            return;
+            echo "Événement introuvable";
+            exit;
         }
         
-        ob_start();
         require __DIR__ . '/../View/templates/header.php';
         require __DIR__ . '/../View/templates/navbar.php';
         require __DIR__ . '/../View/FrontOffice/inscription.php';
         require __DIR__ . '/../View/templates/footer.php';
-        $content = ob_get_clean();
+    }
+
+    /**
+     * Traiter la soumission du formulaire
+     */
+    public function submit() {
+        $this->createInscription($_POST);
         
-        $response = new Response($content);
-        $response->send();
+        header('Location: index.php?page=events&msg=inscription_ok');
+        exit;
+    }
+
+    // ========== CRUD ==========
+
+    /**
+     * CREATE - Créer une inscription
+     */
+    private function createInscription($data) {
+        $stmt = $this->pdo->prepare("INSERT INTO inscription (evenement_id, nom, prenom, age, email, tel) VALUES (?, ?, ?, ?, ?, ?)");
+        return $stmt->execute([
+            $data['evenement_id'] ?? '',
+            $data['nom'] ?? '',
+            $data['prenom'] ?? '',
+            $data['age'] ?? '',
+            $data['email'] ?? '',
+            $data['tel'] ?? ''
+        ]);
+    }
+
+    /**
+     * READ - Récupérer un événement par ID
+     */
+    private function getEventById($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM evenement WHERE id = ?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+        
+        if ($result) {
+            $event = new Evenement();
+            $event->hydrate($result);
+            return $event;
+        }
+        return null;
     }
 }

@@ -1,98 +1,97 @@
 <?php
 // Model/Proposition.php
-require_once 'Database.php';
-require_once __DIR__ . '/../Entity/PropositionEntity.php';
 
+/**
+ * Classe Proposition - Représente une proposition
+ */
 class Proposition {
-    private $pdo;
+    // Propriétés privées (encapsulation)
+    private $id;
+    private $associationNom;
+    private $emailContact;
+    private $tel;
+    private $type;
+    private $description;
+    private $dateProposition;
 
-    public function __construct() {
-        $this->pdo = Database::getPdo();
+    // ========== GETTERS ==========
+    
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getAssociationNom() {
+        return $this->associationNom;
+    }
+
+    public function getEmailContact() {
+        return $this->emailContact;
+    }
+
+    public function getTel() {
+        return $this->tel;
+    }
+
+    public function getType() {
+        return $this->type;
+    }
+
+    public function getDescription() {
+        return $this->description;
+    }
+
+    public function getDateProposition() {
+        return $this->dateProposition;
+    }
+
+    // ========== SETTERS ==========
+    
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function setAssociationNom($associationNom) {
+        $this->associationNom = $associationNom;
+        return $this;
+    }
+
+    public function setEmailContact($emailContact) {
+        $this->emailContact = $emailContact;
+        return $this;
+    }
+
+    public function setTel($tel) {
+        $this->tel = $tel;
+        return $this;
+    }
+
+    public function setType($type) {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function setDescription($description) {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function setDateProposition($dateProposition) {
+        $this->dateProposition = $dateProposition;
+        return $this;
     }
 
     /**
-     * Get all propositions as Entity objects
-     * @return PropositionEntity[]
+     * Hydrater l'objet à partir d'un tableau
      */
-    public function getAll() {
-        $stmt = $this->pdo->query("SELECT * FROM proposition ORDER BY date_proposition DESC");
-        $results = $stmt->fetchAll();
-        
-        $entities = [];
-        foreach ($results as $row) {
-            $entities[] = new PropositionEntity($row);
-        }
-        return $entities;
-    }
-
-    /**
-     * Get proposition by ID as Entity object
-     * @param int $id
-     * @return PropositionEntity|null
-     */
-    public function getById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM proposition WHERE id = ?");
-        $stmt->execute([$id]);
-        $result = $stmt->fetch();
-        
-        return $result ? new PropositionEntity($result) : null;
-    }
-
-    /**
-     * Create new proposition from Entity
-     * @param PropositionEntity $entity
-     * @return bool
-     */
-    public function create(PropositionEntity $entity) {
-        $stmt = $this->pdo->prepare("INSERT INTO proposition (association_nom, email_contact, tel, type, description) VALUES (?, ?, ?, ?, ?)");
-        $result = $stmt->execute([
-            $entity->getAssociationNom(),
-            $entity->getEmailContact(),
-            $entity->getTel(),
-            $entity->getType(),
-            $entity->getDescription()
-        ]);
-        
-        if ($result) {
-            $entity->setId($this->pdo->lastInsertId());
-        }
-        
-        return $result;
-    }
-
-    /**
-     * Update proposition from Entity
-     * @param PropositionEntity $entity
-     * @return bool
-     */
-    public function update(PropositionEntity $entity) {
-        $stmt = $this->pdo->prepare("UPDATE proposition SET association_nom=?, email_contact=?, tel=?, type=?, description=? WHERE id=?");
-        return $stmt->execute([
-            $entity->getAssociationNom(),
-            $entity->getEmailContact(),
-            $entity->getTel(),
-            $entity->getType(),
-            $entity->getDescription(),
-            $entity->getId()
-        ]);
-    }
-
-    /**
-     * Delete proposition by ID
-     * @param int $id
-     * @return bool
-     */
-    public function delete($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM proposition WHERE id = ?");
-        return $stmt->execute([$id]);
-    }
-
-    /**
-     * Count total propositions
-     * @return int
-     */
-    public function count() {
-        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM proposition");
-        return (int) $stmt->fetch()['total'];
+    public function hydrate($data) {
+        if (isset($data['id'])) $this->id = $data['id'];
+        if (isset($data['association_nom'])) $this->associationNom = $data['association_nom'];
+        if (isset($data['email_contact'])) $this->emailContact = $data['email_contact'];
+        if (isset($data['tel'])) $this->tel = $data['tel'];
+        if (isset($data['type'])) $this->type = $data['type'];
+        if (isset($data['description'])) $this->description = $data['description'];
+        if (isset($data['date_proposition'])) $this->dateProposition = $data['date_proposition'];
+        return $this;
     }
 }
