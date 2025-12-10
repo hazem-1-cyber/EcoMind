@@ -23,7 +23,7 @@ class FormulaireController
             $reponses = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $reponses[] = new ReponseFormulaire(
-                    (int)$row['id'],
+                    (int)$row['idformulaire'],
                     $row['email'] ?? null,
                     (int)($row['nb_personnes'] ?? 0),
                     (int)($row['douche_freq'] ?? 0),
@@ -42,39 +42,44 @@ class FormulaireController
     }
 
     // Ajoute une nouvelle réponse (après soumission du formulaire)
-    public function addReponse(ReponseFormulaire $reponse): int
-    {
-        $sql = "INSERT INTO reponse_formulaire 
-                (email, nb_personnes, douche_freq, douche_duree, chauffage, temp_hiver, transport_travail, distance_travail)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // Dans reponseConseil_controller.php → méthode addReponse()
 
-        try {
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                $reponse->getEmail(),
-                $reponse->getNbPersonne(),
-                $reponse->getDoucheFreq(),
-                $reponse->getDureeDouche(),
-                $reponse->getChauffageType(),
-                $reponse->getTempHiver(),
-                $reponse->getTypeTransport(),
-                $reponse->getDistTravail()
-            ]);
-            return (int)$this->db->lastInsertId();
-        } catch (Exception $e) {
-            die('Erreur lors de l\'ajout : ' . $e->getMessage());
-        }
+public function addReponse(ReponseFormulaire $reponse): int
+{
+    $sql = "INSERT INTO reponse_formulaire 
+            (email, nb_personnes, douche_freq, douche_duree, chauffage, temp_hiver, transport_travail, distance_travail, date_soumission)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+    try {
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            $reponse->getEmail(),
+            $reponse->getNbPersonne(),
+            $reponse->getDoucheFreq(),
+            $reponse->getDureeDouche(),
+            $reponse->getChauffageType(),
+            $reponse->getTempHiver(),
+            $reponse->getTypeTransport(),
+            $reponse->getDistTravail()
+        ]);
+
+        return (int)$this->db->lastInsertId(); // Retourne l'ID généré
+    } catch (Exception $e) {
+        // Pour debug : décommente la ligne suivante si tu veux voir l'erreur
+        // die("Erreur SQL : " . $e->getMessage());
+        error_log("Erreur insertion réponse : " . $e->getMessage());
+        return 0;
     }
-
+}
     // Tire un conseil aléatoire pour une catégorie donnée
     private function tirerConseilAleatoire(string $type): ?int
     {
-        $sql = "SELECT id FROM conseil WHERE type = ? ORDER BY RAND() LIMIT 1";
+        $sql = "SELECT idconseil FROM conseil WHERE type = ? ORDER BY RAND() LIMIT 1";
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$type]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? (int)$result['id'] : null;
+            return $result ? (int)$result['idconseil'] : null;
         } catch (Exception $e) {
             return null;
         }
@@ -83,7 +88,7 @@ class FormulaireController
     // Supprime une réponse (admin)
     public function deleteReponse(int $id): void
     {
-        $sql = "DELETE FROM reponse_formulaire WHERE id = :id";
+        $sql = "DELETE FROM reponse_formulaire WHERE idformulaire = :id";
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -96,7 +101,7 @@ class FormulaireController
     // Récupère une réponse par ID (pour afficher les conseils)
     public function getReponseById(int $id): ?ReponseFormulaire
     {
-        $sql = "SELECT * FROM reponse_formulaire WHERE id = :id";
+        $sql = "SELECT * FROM reponse_formulaire WHERE idformulaire = :id";
         try {
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -106,7 +111,7 @@ class FormulaireController
             if (!$row) return null;
 
             return new ReponseFormulaire(
-                (int)$row['id'],
+                (int)$row['idformulaire'],
                 $row['email'],
                 (int)$row['nb_personnes'],
                 (int)$row['douche_freq'],
@@ -136,7 +141,7 @@ class FormulaireController
 
             if ($row) {
                 $conseils[$cat] = new Conseil(
-                    (int)$row['id'],
+                    (int)$row['idconseil'],
                     $cat,
                     $row['texte']
                 );
@@ -166,7 +171,7 @@ class FormulaireController
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row) {
-                $conseilId = (int)$row['id'];
+                $conseilId = (int)$row['idconseil'];
                 $conseilsIds[$cat] = $conseilId;
 
                 $conseils[$cat] = new Conseil(
@@ -192,6 +197,58 @@ class FormulaireController
         return $conseils;
     }
 
+    // Génère des conseils personnalisés avec l'IA
+    public function genererConseilsIA(int $reponseId): array
+    {
+        // Récupérer les données de la réponse
+        $reponse = $this->getReponseById($reponseId);
+        if (!$reponse) {
+            return $this->attribuerConseils($reponseId);
+        }
+
+        // Charger le générateur IA
+        require_once __DIR__ . '/ia_conseil_generator.php';
+        $iaGenerator = new IAConseilGenerator();
+
+        // Générer les conseils avec l'IA
+        $conseilsTextes = $iaGenerator->genererConseils($reponse);
+
+        // Créer les objets Conseil
+        $conseils = [];
+        foreach ($conseilsTextes as $type => $texte) {
+            $conseils[$type] = new Conseil(null, $type, $texte);
+        }
+
+        // Stocker les textes en session
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+        $_SESSION['conseils_ia_' . $reponseId] = $conseilsTextes;
+
+        return $conseils;
+    }
+
+    // Récupère les conseils IA depuis la session
+    public function getConseilsIA(int $reponseId): ?array
+    {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+
+        if (isset($_SESSION['conseils_ia_' . $reponseId])) {
+            $conseilsTextes = $_SESSION['conseils_ia_' . $reponseId];
+            $conseils = [];
+
+            foreach ($conseilsTextes as $type => $texte) {
+                $conseils[$type] = new Conseil(null, $type, $texte);
+            }
+
+            return $conseils;
+        }
+
+        return null;
+    }
+
     // Récupère les conseils déjà attribués à une réponse (depuis la session)
     public function getConseilsAttribues(int $reponseId): array
     {
@@ -205,14 +262,14 @@ class FormulaireController
             $conseils = [];
 
             foreach ($conseilsIds as $type => $conseilId) {
-                $sql = "SELECT * FROM conseil WHERE id = ?";
+                $sql = "SELECT * FROM conseil WHERE idconseil = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$conseilId]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($row) {
                     $conseils[$type] = new Conseil(
-                        (int)$row['id'],
+                        (int)$row['idconseil'],
                         $type,
                         $row['texte']
                     );

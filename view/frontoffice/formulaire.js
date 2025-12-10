@@ -124,8 +124,8 @@ function validerChamp(champ) {
             return false;
         }
 
-        if (id === "temp-hiver" && (nombre < 5 || nombre > 35)) {
-            afficherErreur(champ, "Veuillez entrer une température entre 5°C et 35°C.");
+        if (id === "temp-hiver" && (nombre < -40 || nombre > 50)) {
+            afficherErreur(champ, "Veuillez entrer une température entre -40°C et 50°C.");
             return false;
         }
 

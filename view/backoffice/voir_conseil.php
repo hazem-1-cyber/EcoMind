@@ -10,31 +10,56 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 require_once '../../config.php';
 require_once '../../model/conseilReponse_model.php';
 require_once '../../controller/reponseConseil_controller.php';
+require_once 'notifications.php';
 
 $id = (int)($_GET['id'] ?? 0);
 if ($id <= 0) {
-    die("ID invalide.");
+    header("Location: index.php");
+    exit;
 }
 
 // Récupération de la réponse
 $db = Config::getConnexion();
-$stmt = $db->prepare("SELECT * FROM reponse_formulaire WHERE id = ?");
+$stmt = $db->prepare("SELECT * FROM reponse_formulaire WHERE idformulaire = ?");
 $stmt->execute([$id]);
 $reponse = $stmt->fetch(PDO::FETCH_OBJ);
 
 if (!$reponse) {
-    die("Réponse non trouvée dans la base de données (ID: $id).");
+    $_SESSION['error'] = "Réponse non trouvée (ID: $id)";
+    header("Location: index.php");
+    exit;
 }
 
-// Récupération des conseils attribués à cette réponse (les mêmes que l'utilisateur a vus)
-$controller = new FormulaireController();
-$conseilsObj = $controller->getConseilsAttribues($id);
+// TOUJOURS générer les conseils avec l'IA pour le backoffice
+require_once '../../controller/ia_conseil_generator.php';
+$iaGenerator = new IAConseilGenerator();
 
-// Convertir en tableau simple pour l'affichage
-$conseils = [];
-foreach ($conseilsObj as $type => $conseil) {
-    $conseils[$type] = $conseil->getTexteConseil();
-}
+// Créer un objet ReponseFormulaire depuis les données de la base
+$reponseObj = new ReponseFormulaire(
+    (int)$reponse->idformulaire,
+    $reponse->email,
+    (int)$reponse->nb_personnes,
+    (int)$reponse->douche_freq,
+    (int)$reponse->douche_duree,
+    $reponse->chauffage,
+    (int)$reponse->temp_hiver,
+    $reponse->transport_travail,
+    (int)$reponse->distance_travail,
+    $reponse->date_soumission
+);
+
+// Générer les conseils IA à chaque fois (pour avoir des variations)
+$conseilsTextes = $iaGenerator->genererConseils($reponseObj);
+
+// Préparer les conseils pour l'affichage
+$conseils = [
+    'eau' => $conseilsTextes['eau'] ?? 'Conseil eau non disponible',
+    'energie' => $conseilsTextes['energie'] ?? 'Conseil énergie non disponible', 
+    'transport' => $conseilsTextes['transport'] ?? 'Conseil transport non disponible'
+];
+
+// Générer les notifications pour cette page
+$notifications = genererNotificationsPage($db, 'voir_conseil');
 ?>
 
 <!DOCTYPE html>
@@ -44,64 +69,189 @@ foreach ($conseilsObj as $type => $conseil) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conseils Admin - Réponse #<?= $id ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root{--vert:#013220;--mint:#A8E6CF;}
-        body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;color:var(--vert);margin:0;padding:40px 20px;}
-        .container{max-width:1300px;margin:0 auto;background:white;border-radius:30px;box-shadow:0 25px 70px rgba(1,50,32,0.2);overflow:hidden;}
-        header{background:linear-gradient(135deg,var(--vert),#001a10,var(--mint));color:white;padding:50px;text-align:center;}
-        h1{font-size:40px;margin:0;}
-        .back{display:inline-block;margin:20px;padding:12px 30px;background:rgba(255,255,255,0.3);color:white;border-radius:50px;text-decoration:none;font-weight:bold;}
-        .back:hover{background:rgba(255,255,255,0.5);}
-        .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;padding:50px;background:#f0f8f5;}
-        .box{background:white;padding:30px;border-radius:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.1);border-top:5px solid var(--mint);}
-        .box h3{color:var(--mint);font-size:22px;}
-        .box p{font-size:28px;font-weight:900;color:var(--vert);}
-        .conseils{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:40px;padding:60px 40px;background:white;}
-        .card{background:white;padding:50px;border-radius:30px;text-align:center;box-shadow:0 20px 50px rgba(1,50,32,0.15);border-top:8px solid var(--mint);transition:0.4s;}
-        .card:hover{transform:translateY(-15px);}
-        .card i{font-size:70px;color:var(--mint);margin-bottom:20px;}
-        .card h2{font-size:30px;color:var(--vert);margin:15px 0;}
-        .card p{font-size:19px;line-height:1.8;color:#444;}
-        .note{background:#fff3cd;color:#856404;padding:20px;margin:20px 40px;border-radius:15px;text-align:center;font-weight:600;border-left:4px solid #ffc107;}
-    </style>
+    <link rel="stylesheet" href="<?php echo dirname($_SERVER['SCRIPT_NAME']); ?>/backoffice.css?v=<?php echo time(); ?>">
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>Vue Admin – Conseils générés (ID #<?= $id ?>)</h1>
-        <a href="index.php" class="back">Retour au backoffice</a>
-    </header>
 
-    <div class="note">
-        Voici les conseils.
+<div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="../frontoffice/assets/images/Screenshot_2025-11-16_152042-removebg-preview.png" alt="EcoMind Logo">
+                </div>
+                <span class="logo-text">EcoMind</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.php" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="gerer_conseils.php" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Gestion de Conseils</span>
+            </a>
+            <a href="gestion_reponses.php" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Gestion des Réponses</span>
+            </a>
+            <a href="gestion_ia.php" class="nav-item">
+                <span>🤖 Gestion IA</span>
+            </a>
+            <a href="test_ia.php" class="nav-item">
+                <i class="fas fa-flask"></i>
+                <span>Test IA</span>
+            </a>
+        </nav>
     </div>
 
-    <div class="info">
-        <div class="box"><h3>Email</h3><p><?= htmlspecialchars($reponse->email ?? '—') ?></p></div>
-        <div class="box"><h3>Personnes</h3><p><?= $reponse->nb_personnes ?></p></div>
-        <div class="box"><h3>Douches/sem</h3><p><?= $reponse->douche_freq ?></p></div>
-        <div class="box"><h3>Chauffage</h3><p><?= ucfirst($reponse->chauffage ?? '—') ?></p></div>
-        <div class="box"><h3>Transport</h3><p><?= htmlspecialchars($reponse->transport_travail ?? '—') ?></p></div>
-        <div class="box"><h3>Date</h3><p><?= date('d/m/Y H:i', strtotime($reponse->date_soumission)) ?></p></div>
-    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="top-header">
+            <h1><i class="fas fa-eye"></i> Conseils générés - Réponse #<?= $id ?></h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <!-- Cloche de notifications -->
+                <?= renderNotificationBell($notifications) ?>
+                <a href="index.php" class="logout-btn">Retour au Dashboard</a>
+            </div>
+        </div>
 
-    <div class="conseils">
-        <div class="card">
-            <i class="fas fa-tint"></i>
-            <h2>Eau</h2>
-            <p><?= nl2br(htmlspecialchars($conseils['eau'] ?? 'Aucun conseil eau attribué')) ?></p>
+        <!-- INFORMATIONS RÉPONSE -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-envelope"></i></div>
+                <div>
+                    <p>Email</p>
+                    <h3 style="font-size:16px;"><?= htmlspecialchars($reponse->email ?? '—') ?></h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <div>
+                    <p>Personnes</p>
+                    <h3><?= $reponse->nb_personnes ?></h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-shower"></i></div>
+                <div>
+                    <p>Douches/sem</p>
+                    <h3><?= $reponse->douche_freq ?></h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-fire"></i></div>
+                <div>
+                    <p>Chauffage</p>
+                    <h3 style="font-size:18px;"><?= ucfirst($reponse->chauffage ?? '—') ?></h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-car"></i></div>
+                <div>
+                    <p>Transport</p>
+                    <h3 style="font-size:16px;"><?= htmlspecialchars($reponse->transport_travail ?? '—') ?></h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-calendar"></i></div>
+                <div>
+                    <p>Date</p>
+                    <h3 style="font-size:14px;"><?= date('d/m/Y H:i', strtotime($reponse->date_soumission)) ?></h3>
+                </div>
+            </div>
         </div>
-        <div class="card">
-            <i class="fas fa-bolt"></i>
-            <h2>Énergie</h2>
-            <p><?= nl2br(htmlspecialchars($conseils['energie'] ?? 'Aucun conseil énergie attribué')) ?></p>
-        </div>
-        <div class="card">
-            <i class="fas fa-bicycle"></i>
-            <h2>Transport</h2>
-            <p><?= nl2br(htmlspecialchars($conseils['transport'] ?? 'Aucun conseil transport attribué')) ?></p>
+
+        <!-- CONSEILS ATTRIBUÉS -->
+        <div class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <h2><i class="fas fa-lightbulb"></i> Conseils générés par IA</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 20px; border-radius: 20px; font-size: 0.9em; font-weight: bold;">
+                        🤖 IA Activée
+                    </span>
+                    <button onclick="window.location.href='voir_conseil.php?id=<?= $id ?>&regenerate=' + Date.now()" 
+                            style="background: #667eea; color: white; padding: 8px 15px; border: none; border-radius: 15px; cursor: pointer; font-size: 0.85em; transition: all 0.3s;"
+                            onmouseover="this.style.background='#5a6fd8'" 
+                            onmouseout="this.style.background='#667eea'"
+                            title="Génère de nouveaux conseils avec des variations">
+                        🔄 Régénérer
+                    </button>
+                </div>
+            </div>
+            <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05)); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                <p style="margin: 0; color: #333; font-size: 0.95em;">
+                    <strong>💡 Info :</strong> Ces conseils sont générés en temps réel par l'IA basée sur le profil de cet utilisateur. 
+                    Cliquez sur "Régénérer" pour voir des variations.
+                </p>
+            </div>
+            
+            <div class="conseils-grid">
+                <div class="conseil-card">
+                    <div class="conseil-header">
+                        <span class="conseil-badge conseil-badge-eau">💧 EAU</span>
+                    </div>
+                    <div class="conseil-body">
+                        <p><?= nl2br(htmlspecialchars($conseils['eau'])) ?></p>
+                    </div>
+                </div>
+
+                <div class="conseil-card">
+                    <div class="conseil-header">
+                        <span class="conseil-badge conseil-badge-energie">⚡ ÉNERGIE</span>
+                    </div>
+                    <div class="conseil-body">
+                        <p><?= nl2br(htmlspecialchars($conseils['energie'])) ?></p>
+                    </div>
+                </div>
+
+                <div class="conseil-card">
+                    <div class="conseil-header">
+                        <span class="conseil-badge conseil-badge-transport">🚗 TRANSPORT</span>
+                    </div>
+                    <div class="conseil-body">
+                        <p><?= nl2br(htmlspecialchars($conseils['transport'])) ?></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+<?= getNotificationJavaScript() ?>
+
+// ==================== NOTIFICATIONS ====================
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = 'js-notification' + (type === 'error' ? ' error' : '');
+    
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    notification.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Supprimer après 5 secondes
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// Vérifier s'il y a une notification à afficher
+<?php if (isset($_SESSION['notification'])): ?>
+    showNotification('<?= addslashes($_SESSION['notification']) ?>', '<?= $_SESSION['notification_type'] ?? 'success' ?>');
+    <?php 
+    unset($_SESSION['notification']); 
+    unset($_SESSION['notification_type']);
+    ?>
+<?php endif; ?>
+</script>
+
 </body>
 </html>
