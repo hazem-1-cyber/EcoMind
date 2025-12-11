@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../Model/Database.php';
 require_once __DIR__ . '/../Model/Inscription.php';
 require_once __DIR__ . '/../Model/Evenement.php';
+require_once __DIR__ . '/../Model/EmailService.php';
 
 /**
  * InscriptionController - Contient la logique CRUD pour les inscriptions
@@ -35,7 +36,12 @@ class InscriptionController {
      * Traiter la soumission du formulaire
      */
     public function submit() {
-        $this->createInscription($_POST);
+        $success = $this->createInscription($_POST);
+        
+        if ($success) {
+            // Envoyer l'email de bienvenue et confirmation
+            $this->sendWelcomeEmail($_POST);
+        }
         
         header('Location: index.php?page=events&msg=inscription_ok');
         exit;
@@ -64,7 +70,7 @@ class InscriptionController {
     private function getEventById($id) {
         $stmt = $this->pdo->prepare("SELECT * FROM evenement WHERE id = ?");
         $stmt->execute([$id]);
-        $result = $stmt->fetch();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($result) {
             $event = new Evenement();
@@ -72,5 +78,48 @@ class InscriptionController {
             return $event;
         }
         return null;
+    }
+
+    /**
+     * Envoyer l'email de bienvenue et confirmation
+     */
+    private function sendWelcomeEmail($data) {
+        try {
+            // Récupérer les informations de l'événement
+            $event = $this->getEventById($data['evenement_id']);
+            if (!$event) {
+                error_log("Impossible de récupérer l'événement pour l'email de confirmation");
+                return false;
+            }
+            
+            // Créer le service email et envoyer
+            $emailService = new EmailService();
+            $participantName = trim(($data['prenom'] ?? '') . ' ' . ($data['nom'] ?? ''));
+            $eventTitle = $event->getTitre();
+            $participantEmail = $data['email'] ?? '';
+            
+            if (empty($participantEmail)) {
+                error_log("Email du participant manquant pour l'envoi de confirmation");
+                return false;
+            }
+            
+            $result = $emailService->sendWelcomeConfirmation(
+                $participantEmail,
+                $participantName,
+                $eventTitle
+            );
+            
+            if ($result) {
+                error_log("Email de bienvenue envoyé avec succès à: $participantEmail");
+            } else {
+                error_log("Échec de l'envoi de l'email de bienvenue à: $participantEmail");
+            }
+            
+            return $result;
+            
+        } catch (Exception $e) {
+            error_log("Erreur lors de l'envoi de l'email de bienvenue: " . $e->getMessage());
+            return false;
+        }
     }
 }

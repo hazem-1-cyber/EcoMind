@@ -10,7 +10,7 @@ $pageTitle = $isEdit ? 'Modifier un événement' : 'Ajouter un événement';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoMind - <?= $pageTitle ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/back_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/back_style.css?v=<?= time() ?>">
 </head>
 <body>
 
@@ -40,6 +40,31 @@ $pageTitle = $isEdit ? 'Modifier un événement' : 'Ajouter un événement';
             <a href="<?= BASE_URL ?>/index.php?page=admin_dashboard#propositions" class="nav-item">
                 <i class="fas fa-lightbulb"></i>
                 <span>Propositions</span>
+            </a>
+            <div class="nav-dropdown" id="searchDropdown">
+                <div class="nav-dropdown-toggle">
+                    <i class="fas fa-search"></i>
+                    <span>Rechercher</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="nav-dropdown-content">
+                    <a href="<?= BASE_URL ?>/index.php?page=search_events" class="nav-sub-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Événements</span>
+                    </a>
+                    <a href="<?= BASE_URL ?>/index.php?page=search_inscriptions" class="nav-sub-item">
+                        <i class="fas fa-users"></i>
+                        <span>Inscriptions</span>
+                    </a>
+                    <a href="<?= BASE_URL ?>/index.php?page=search_propositions" class="nav-sub-item">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Propositions</span>
+                    </a>
+                </div>
+            </div>
+            <a href="<?= BASE_URL ?>/index.php?page=statistiques" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistiques</span>
             </a>
             <a href="<?= BASE_URL ?>/index.php?page=events" class="nav-item">
                 <i class="fas fa-arrow-left"></i>
@@ -100,6 +125,21 @@ $pageTitle = $isEdit ? 'Modifier un événement' : 'Ajouter un événement';
 
     </div>
 </div>
+
+<script>
+// Search dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchDropdown = document.getElementById('searchDropdown');
+    if (searchDropdown) {
+        searchDropdown.addEventListener('click', function(e) {
+            if (e.target.closest('.nav-dropdown-toggle')) {
+                e.preventDefault();
+                this.classList.toggle('active');
+            }
+        });
+    }
+});
+</script>
 
 </body>
 </html>

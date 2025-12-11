@@ -26,8 +26,12 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach($inscriptions as $ins): ?>
-            <tr>
+            <?php 
+            $highlightId = isset($_GET['highlight']) ? (int)$_GET['highlight'] : null;
+            foreach($inscriptions as $ins): 
+                $isHighlighted = ($highlightId && $ins['id'] == $highlightId);
+            ?>
+            <tr <?= $isHighlighted ? 'class="highlighted" id="highlighted-row"' : '' ?>>
                 <td><?= $ins['id'] ?></td>
                 <td><?= $ins['evenement_id'] ?></td>
                 <td><?= htmlspecialchars($ins['nom']) ?></td>

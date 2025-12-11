@@ -25,8 +25,12 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach($propositions as $p): ?>
-            <tr>
+            <?php 
+            $highlightId = isset($_GET['highlight']) ? (int)$_GET['highlight'] : null;
+            foreach($propositions as $p): 
+                $isHighlighted = ($highlightId && $p['id'] == $highlightId);
+            ?>
+            <tr <?= $isHighlighted ? 'class="highlighted" id="highlighted-row"' : '' ?>>
                 <td><?= $p['id'] ?></td>
                 <td><?= htmlspecialchars($p['association_nom']) ?></td>
                 <td><?= htmlspecialchars($p['email_contact']) ?></td>

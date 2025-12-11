@@ -76,6 +76,26 @@ switch ($page) {
         $controller->propositions();
         break;
 
+    case 'statistiques':
+        $controller = new StatistiquesController();
+        $controller->index();
+        break;
+
+    case 'search_events':
+        $controller = new AdminController();
+        $controller->searchEvents();
+        break;
+
+    case 'search_inscriptions':
+        $controller = new AdminController();
+        $controller->searchInscriptions();
+        break;
+
+    case 'search_propositions':
+        $controller = new AdminController();
+        $controller->searchPropositions();
+        break;
+
     default:
         // Page non trouvée - rediriger vers events
         header('Location: index.php?page=events');

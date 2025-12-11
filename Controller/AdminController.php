@@ -420,4 +420,25 @@ class AdminController {
         header('Location: index.php?page=admin_dashboard');
         exit;
     }
+
+    /**
+     * Page de recherche avancée pour les événements
+     */
+    public function searchEvents() {
+        require __DIR__ . '/../View/BackOffice/search_events.php';
+    }
+
+    /**
+     * Page de recherche avancée pour les inscriptions
+     */
+    public function searchInscriptions() {
+        require __DIR__ . '/../View/BackOffice/search_inscriptions.php';
+    }
+
+    /**
+     * Page de recherche avancée pour les propositions
+     */
+    public function searchPropositions() {
+        require __DIR__ . '/../View/BackOffice/search_propositions.php';
+    }
 }

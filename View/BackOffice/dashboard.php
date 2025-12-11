@@ -13,7 +13,7 @@ $totalPropositions = $stats['totalPropositions'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoMind - Backoffice Événements</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/back_style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/back_style.css?v=<?= date('YmdHis') . rand(1000,9999) ?>">
 </head>
 <body>
 
@@ -43,6 +43,31 @@ $totalPropositions = $stats['totalPropositions'];
             <a href="#" class="nav-item" data-section="propositions">
                 <i class="fas fa-lightbulb"></i>
                 <span>Propositions</span>
+            </a>
+            <div class="nav-dropdown" id="searchDropdown">
+                <div class="nav-dropdown-toggle">
+                    <i class="fas fa-search"></i>
+                    <span>Rechercher</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="nav-dropdown-content">
+                    <a href="<?= BASE_URL ?>/index.php?page=search_events" class="nav-sub-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Événements</span>
+                    </a>
+                    <a href="<?= BASE_URL ?>/index.php?page=search_inscriptions" class="nav-sub-item">
+                        <i class="fas fa-users"></i>
+                        <span>Inscriptions</span>
+                    </a>
+                    <a href="<?= BASE_URL ?>/index.php?page=search_propositions" class="nav-sub-item">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Propositions</span>
+                    </a>
+                </div>
+            </div>
+            <a href="<?= BASE_URL ?>/index.php?page=statistiques" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistiques</span>
             </a>
             <a href="<?= BASE_URL ?>/index.php?page=events" class="nav-item">
                 <i class="fas fa-arrow-left"></i>
@@ -456,6 +481,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update notifications every 3 seconds for near real-time updates
     setInterval(updateNotifications, 3000);
+});
+
+// Search dropdown functionality
+document.getElementById('searchDropdown').addEventListener('click', function(e) {
+    if (e.target.closest('.nav-dropdown-toggle')) {
+        e.preventDefault();
+        this.classList.toggle('active');
+    }
 });
 </script>
 

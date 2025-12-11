@@ -1,6 +1,13 @@
 RewriteEngine On
 RewriteBase /ecomind-events/
 
+# Cache busting for CSS and JS files
+<FilesMatch "\.(css|js)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+</FilesMatch>
+
 # Redirect root to events page
 RewriteRule ^$ index.php?page=events [L]
 
