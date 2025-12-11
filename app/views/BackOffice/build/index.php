@@ -279,6 +279,8 @@
                   <thead>
                     <tr class="bg-gray-50">
                       <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">ID</th>
+                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Role</th>
+
                       <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Name</th>
                       <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Email</th>
                       <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Address</th>
@@ -292,6 +294,9 @@
                         <tr class="hover:bg-gray-50 transition-colors">
                           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700">
                             <?php echo htmlspecialchars($user['id'] ?? 'N/A'); ?>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                            <?php echo htmlspecialchars($user['role'] ?? 'N/A'); ?>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
@@ -342,6 +347,14 @@
                                 class="text-yellow-600 hover:text-yellow-800 font-semibold">
                                 Ban
                               </a>
+
+                              <!-- Nouveau bouton : visible seulement si rôle = user et patente_image != null -->
+        <?php if ($user['role'] === 'user' && !empty($user['patente_image'])): ?>
+            <a href="approve_association.php?id=<?php echo $user['id']; ?>"
+               class="text-green-600 hover:text-green-800 font-semibold">
+                Approve Association
+            </a>
+        <?php endif; ?>
                             </div>
                           </td>
                         </tr>
