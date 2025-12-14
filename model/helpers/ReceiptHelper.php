@@ -4,7 +4,7 @@
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../config.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -30,7 +30,7 @@ class ReceiptHelper {
         $dompdf->render();
         
         // Créer le dossier uploads/receipts s'il n'existe pas
-        $uploadDir = __DIR__ . '/../uploads/receipts/';
+        $uploadDir = __DIR__ . '/../../view/FrontOffice/images/uploads/receipts/';
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
@@ -45,7 +45,7 @@ class ReceiptHelper {
         return [
             'filename' => $filename,
             'filepath' => $filepath,
-            'url' => 'uploads/receipts/' . $filename
+            'url' => 'view/FrontOffice/images/uploads/receipts/' . $filename
         ];
     }
     

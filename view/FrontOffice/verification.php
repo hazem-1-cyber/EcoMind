@@ -7,7 +7,7 @@ session_start();
 require_once __DIR__ . "/../../config.php";
 require_once __DIR__ . "/../../model/DonModel.php";
 require_once __DIR__ . "/../../controller/DonController.php";
-require_once __DIR__ . "/../../config/SettingsManager.php";
+require_once __DIR__ . "/../../model/config/SettingsManager.php";
 
 $settingsManager = new SettingsManager();
 
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Récupérer et valider les données du formulaire
 $typeDon = trim($_POST['type_don'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$email = strtolower(trim($_POST['email'] ?? ''));
 $associationId = (int)($_POST['association_id'] ?? 0);
 
 // Validation basique côté serveur
@@ -40,7 +40,7 @@ if ($associationId <= 0) {
 // Traiter l'upload de l'image si présente
 $imagePath = null;
 if (isset($_FILES['image_don']) && $_FILES['image_don']['error'] === UPLOAD_ERR_OK) {
-    $uploadDir = __DIR__ . '/../../uploads/dons/';
+    $uploadDir = __DIR__ . '/images/uploads/dons/';
     
     // Créer le dossier s'il n'existe pas
     if (!is_dir($uploadDir)) {
@@ -55,7 +55,7 @@ if (isset($_FILES['image_don']) && $_FILES['image_don']['error'] === UPLOAD_ERR_
         $targetPath = $uploadDir . $fileName;
         
         if (move_uploaded_file($_FILES['image_don']['tmp_name'], $targetPath)) {
-            $imagePath = 'uploads/dons/' . $fileName;
+            $imagePath = 'view/FrontOffice/images/uploads/dons/' . $fileName;
         }
     }
 }
@@ -124,9 +124,7 @@ if (!empty($errors)) {
         echo "<li style='color:red;'>$err</li>";
     }
     echo "</ul>";
-    echo "<h4>Données POST reçues:</h4><pre>";
-    print_r($_POST);
-    echo "</pre>";
+
     echo "<a href='addDon.php'>Retour au formulaire</a>";
     exit;
 }

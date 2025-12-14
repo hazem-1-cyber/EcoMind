@@ -3,8 +3,8 @@ session_start();
 require_once __DIR__ . "/../../controller/DonController.php";
 require_once __DIR__ . "/../../model/DonModel.php";
 require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__ . '/../../config/SettingsManager.php';
+require_once __DIR__ . '/../../model/vendor/autoload.php';
+require_once __DIR__ . '/../../model/config/SettingsManager.php';
 
 $settingsManager = new SettingsManager();
 
@@ -56,7 +56,7 @@ try {
     // Créer l'objet Don avec toutes les données
     $don = new Don();
     $don->setTypeDon($donData['type_don']);
-    $don->setEmail($donData['email']);
+    $don->setEmail(strtolower($donData['email']));
     $don->setAssociationId($donData['association_id']);
     
     // Vérifier si validation automatique activée
@@ -82,8 +82,8 @@ try {
     
     // Envoyer les emails si les notifications sont activées
     if ($settingsManager->get('email_notifications', true)) {
-        require_once __DIR__ . '/../../helpers/EmailHelper.php';
-        require_once __DIR__ . '/../../helpers/ReceiptHelper.php';
+        require_once __DIR__ . '/../../model/helpers/EmailHelper.php';
+        require_once __DIR__ . '/../../model/helpers/ReceiptHelper.php';
         
         // Récupérer les données complètes du don
         $donComplet = $donCtrl->getDon($lastDonId);

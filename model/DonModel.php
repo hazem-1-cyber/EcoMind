@@ -90,7 +90,7 @@ class Don {
     public function getDescriptionDon(): ?string { return $this->description_don; }
     public function setDescriptionDon(?string $description_don): void { $this->description_don = $description_don; }
     public function getEmail(): ?string { return $this->email; }
-    public function setEmail(?string $email): void { $this->email = $email; }
+    public function setEmail(?string $email): void { $this->email = $email ? strtolower($email) : null; }
     public function getAssociationId(): ?int { return $this->association_id; }
     public function setAssociationId(?int $association_id): void { $this->association_id = $association_id; }
     public function getStatut(): ?string { return $this->statut; }

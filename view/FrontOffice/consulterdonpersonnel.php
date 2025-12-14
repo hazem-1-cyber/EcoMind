@@ -15,7 +15,7 @@ $errorMessage = '';
 
 // Traiter la recherche quand le formulaire est soumis
 if (isset($_GET['search']) && isset($_GET['email']) && !empty($_GET['email'])) {
-    $email = trim($_GET['email']);
+    $email = strtolower(trim($_GET['email']));
     
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         try {
@@ -23,9 +23,7 @@ if (isset($_GET['search']) && isset($_GET['email']) && !empty($_GET['email'])) {
             $dons = $donCtrl->getDonsByEmail($email);
             $showResults = true;
             
-            // Log pour debug
-            error_log("Recherche pour email: " . $email);
-            error_log("Nombre de dons trouvés: " . count($dons));
+
             
         } catch (Exception $e) {
             $errorMessage = "Une erreur est survenue lors de la recherche.";
@@ -43,8 +41,9 @@ if (isset($_GET['search']) && isset($_GET['email']) && !empty($_GET['email'])) {
       <p class="subtitle">Consultez l'historique de vos dons en saisissant votre adresse e-mail.</p>
       
       <?php if ($errorMessage): ?>
-        <div class="error-box" style="background: #fadbd8; color: #c0392b; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-          ✗ <?= htmlspecialchars($errorMessage) ?>
+        <div class="error-box">
+          <i class="fas fa-exclamation-triangle"></i>
+          <?= htmlspecialchars($errorMessage) ?>
         </div>
       <?php endif; ?>
       
@@ -59,37 +58,41 @@ if (isset($_GET['search']) && isset($_GET['email']) && !empty($_GET['email'])) {
         
         <input type="hidden" name="search" value="1">
 
-        <button type="submit" class="submit-btn">Rechercher mes dons</button>
-        <a href="addDon.php" class="submit-btn" style="display: inline-block; text-align: center; text-decoration: none;">Faire un nouveau don</a>
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-search"></i> Rechercher mes dons
+        </button>
+        <a href="addDon.php" class="submit-btn btn-secondary">
+          <i class="fas fa-plus-circle"></i> Faire un nouveau don
+        </a>
       </form>
     </div>
   </div>
 
       <?php if ($showResults): ?>
         <div class="results-section">
-          <h2>Mes dons (<?= count($dons) ?>)</h2>
-          
-          <!-- Debug info (à supprimer en production) -->
-          <?php if (isset($_GET['debug'])): ?>
-            <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 12px;">
-              <strong>Debug Info:</strong><br>
-              Email recherché: <?= htmlspecialchars($email) ?><br>
-              Nombre de résultats: <?= count($dons) ?><br>
-              <?php if (count($dons) > 0): ?>
-                Premier don ID: <?= $dons[0]['id'] ?? 'N/A' ?><br>
-                Type: <?= $dons[0]['type_don'] ?? 'N/A' ?><br>
-              <?php endif; ?>
+          <?php if (!empty($dons)): ?>
+            <div class="success-box">
+              <i class="fas fa-check-circle"></i>
+              <?= count($dons) ?> don(s) trouvé(s) pour l'adresse <strong><?= htmlspecialchars($email) ?></strong>
             </div>
           <?php endif; ?>
+          <h2>
+            <i class="fas fa-heart"></i> Mes dons (<?= count($dons) ?>)
+          </h2>
+          
+
           
           <?php if (empty($dons)): ?>
             <div class="no-results-card">
               <div class="no-results-icon">
-                <i class="fas fa-inbox"></i>
+                <i class="fas fa-seedling"></i>
               </div>
               <h3>Aucun don trouvé</h3>
-              <p>Vous n'avez pas encore effectué de don avec cette adresse email.</p>
-              <a href="addDon.php" class="btn-link-primary">Faire mon premier don</a>
+              <p>Vous n'avez pas encore effectué de don avec cette adresse email.<br>
+                 Rejoignez notre communauté et contribuez à un avenir plus vert !</p>
+              <a href="addDon.php" class="btn-link-primary">
+                <i class="fas fa-leaf"></i> Faire mon premier don
+              </a>
             </div>
           <?php else: ?>
             <div class="dons-list">
@@ -97,25 +100,43 @@ if (isset($_GET['search']) && isset($_GET['email']) && !empty($_GET['email'])) {
                 <div class="don-card">
                   <div class="don-header">
                     <span class="don-id">Don #<?= $don['id'] ?></span>
-                    <span class="don-date"><?= date('d/m/Y', strtotime($don['created_at'])) ?></span>
+                    <span class="don-date">
+                      <i class="fas fa-calendar-alt"></i>
+                      <?= date('d/m/Y', strtotime($don['created_at'])) ?>
+                    </span>
                   </div>
                   
                   <div class="don-details">
-                    <p><strong>Type:</strong> <?= ucfirst(str_replace('_', ' ', $don['type_don'])) ?></p>
+                    <p>
+                      <strong><i class="fas fa-tag"></i> Type:</strong> 
+                      <?= ucfirst(str_replace('_', ' ', $don['type_don'])) ?>
+                    </p>
                     
                     <?php if ($don['type_don'] === 'money' && $don['montant']): ?>
-                      <p><strong>Montant:</strong> <?= number_format($don['montant'], 2) ?> TND</p>
+                      <p>
+                        <strong><i class="fas fa-coins"></i> Montant:</strong> 
+                        <span style="color: #27ae60; font-weight: 700; font-size: 1.1em;">
+                          <?= number_format($don['montant'], 2) ?> TND
+                        </span>
+                      </p>
                     <?php endif; ?>
                     
                     <?php if ($don['ville']): ?>
-                      <p><strong>Ville:</strong> <?= htmlspecialchars($don['ville']) ?></p>
+                      <p>
+                        <strong><i class="fas fa-map-marker-alt"></i> Ville:</strong> 
+                        <?= htmlspecialchars($don['ville']) ?>
+                      </p>
                     <?php endif; ?>
                     
                     <?php if ($don['livraison']): ?>
-                      <p><strong>Livraison:</strong> <?= ucfirst(str_replace('_', ' ', $don['livraison'])) ?></p>
+                      <p>
+                        <strong><i class="fas fa-truck"></i> Livraison:</strong> 
+                        <?= ucfirst(str_replace('_', ' ', $don['livraison'])) ?>
+                      </p>
                     <?php endif; ?>
                     
-                    <p><strong>Statut:</strong> 
+                    <p>
+                      <strong><i class="fas fa-info-circle"></i> Statut:</strong> 
                       <span class="statut-badge statut-<?= $don['statut'] ?>">
                         <?php
                         switch($don['statut']) {

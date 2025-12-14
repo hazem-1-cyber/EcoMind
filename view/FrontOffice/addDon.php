@@ -1,7 +1,7 @@
 ﻿<?php
 // Charger les associations statiques depuis la base de données
 require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../config/SettingsManager.php';
+require_once __DIR__ . '/../../model/config/SettingsManager.php';
 
 $db = Config::getConnexion();
 $settingsManager = new SettingsManager();
@@ -83,6 +83,33 @@ include __DIR__ . '/includes/header.php';
       setTimeout(() => createLeaf(), i * 300);
     }
   });
+  </script>
+
+  <!-- JavaScript simple pour les champs conditionnels -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gestion des champs conditionnels
+      const typeSelect = document.getElementById('type-don');
+      if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+          const value = this.value;
+          const moneyFields = document.getElementById('money-fields');
+          const autreFields = document.getElementById('autre-type-fields');
+          
+          // Cacher tous les champs
+          if (moneyFields) moneyFields.style.display = 'none';
+          if (autreFields) autreFields.style.display = 'none';
+          
+          // Afficher les bons champs
+          if (value === 'money' && moneyFields) {
+            moneyFields.style.display = 'block';
+          } else if (value && value !== 'money' && autreFields) {
+            autreFields.style.display = 'block';
+          }
+        });
+      }
+
+    });
   </script>
 
   <!-- Animation de feuilles qui tombent -->
@@ -197,46 +224,7 @@ include __DIR__ . '/includes/header.php';
       font-size: 20px;
     }
 
-    .progress-bar-container {
-      background: #e9ecef;
-      height: 40px;
-      border-radius: 20px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .progress-bar-fill {
-      background: linear-gradient(90deg, #1a3d1b 0%, #2c5f2d 30%, #88b04b 70%, #A8E6CF 100%);
-      height: 100%;
-      transition: width 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 20px;
-      color: white;
-      font-weight: 700;
-      font-size: 18px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .progress-bar-fill::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
+    /* Styles originaux restaurés */
 
     .progress-message {
       margin-top: 15px;
@@ -279,30 +267,71 @@ include __DIR__ . '/includes/header.php';
     }
 
     .stat-box {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fff9 100%);
+      padding: 25px 20px;
+      border-radius: 16px;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(44, 95, 45, 0.1);
-      border: 2px solid #A8E6CF;
-      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 6px 20px rgba(44, 95, 45, 0.12);
+      border: 2px solid rgba(168, 230, 207, 0.6);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #A8E6CF, #88b04b);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .stat-box:hover::before {
+      transform: scaleX(1);
     }
 
     .stat-box:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(44, 95, 45, 0.2);
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(44, 95, 45, 0.25);
+      border-color: #88b04b;
     }
 
     .stat-value {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 700;
       color: #2c5f2d;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(44, 95, 45, 0.1);
+      animation: countUp 2s ease-out;
+    }
+
+    @keyframes countUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      animation: bounce 2s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(44, 95, 45, 0.2));
     }
 
     .stat-label {
-      font-size: 14px;
-      color: #6c757d;
+      font-size: 15px;
+      color: #4a5f4a;
+      font-weight: 600;
+      text-align: center;
     }
 
     .encouragement-icon {
@@ -378,74 +407,100 @@ include __DIR__ . '/includes/header.php';
       transform: scale(1.1);
     }
 
-    /* Styles futuristes pour le formulaire */
+    /* Styles simples pour le formulaire */
     .don-container {
       position: relative;
       z-index: 2;
-      animation: fadeInUp 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    /* Styles simples pour la carte de formulaire */
     .form-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 255, 249, 0.95) 100%);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 20px 60px rgba(44, 95, 45, 0.15), 0 0 0 1px rgba(168, 230, 207, 0.2);
-      border-radius: 24px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .form-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, #2c5f2d, #88b04b, #A8E6CF, #88b04b, #2c5f2d);
-      background-size: 200% 100%;
-      animation: gradientShift 3s ease infinite;
-    }
-
-    @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e9ecef;
     }
 
     .form-card h1 {
-      background: linear-gradient(135deg, #2c5f2d, #88b04b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 3s ease-in-out infinite;
+      color: #2c5f2d;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    @keyframes shimmer {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
+    /* Styles simples pour les champs de formulaire */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2c5f2d;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #A8E6CF;
+      border-radius: 8px;
+      font-size: 16px;
     }
 
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(44, 95, 45, 0.2), 0 0 0 3px rgba(168, 230, 207, 0.3);
+      outline: none;
+      border-color: #88b04b;
     }
 
+    /* Styles simples pour les boutons de montant */
+    .amounts {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .amount-btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 12px;
+      text-align: center;
+      background: rgba(168, 230, 207, 0.3);
+      border: 2px solid #A8E6CF;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .amount-btn:hover,
+    .amount-btn.selected {
+      background: #A8E6CF;
+      color: #013220;
+      border-color: #013220;
+    }
+
+    /* === BOUTON SUBMIT HARMONISÉ === */
     .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #013220 0%, rgba(1, 50, 32, 0.9) 50%, #A8E6CF 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 25px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      grid-column: span 2;
+      box-shadow: 0 8px 25px rgba(168, 230, 207, 0.4);
       position: relative;
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
     .submit-btn::before {
@@ -462,38 +517,152 @@ include __DIR__ . '/includes/header.php';
     }
 
     .submit-btn:hover::before {
-      width: 300px;
-      height: 300px;
+      width: 400px;
+      height: 400px;
     }
 
     .submit-btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 15px 40px rgba(44, 95, 45, 0.4);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 12px 35px rgba(168, 230, 207, 0.5);
     }
 
-    .amount-btn {
-      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      position: relative;
-      overflow: hidden;
+    .submit-btn:active {
+      transform: scale(0.98);
     }
 
-    .amount-btn::after {
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* === ANIMATIONS D'APPARITION === */
+    .form-group {
+      animation: slideInLeft 0.6s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    .form-group:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* === EFFETS DE VALIDATION === */
+    .form-group.valid input,
+    .form-group.valid select,
+    .form-group.valid textarea {
+      border-color: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    }
+
+    .form-group.valid label::after {
       content: '✓';
+      position: absolute;
+      right: -25px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #28a745;
+      font-weight: bold;
+      font-size: 18px;
+      animation: checkmark 0.5s ease-out;
+    }
+
+    @keyframes checkmark {
+      from {
+        opacity: 0;
+        transform: translateY(-50%) scale(0);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+      }
+    }
+
+    .form-group.error input,
+    .form-group.error select,
+    .form-group.error textarea {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* === LOADING STATES === */
+    .submit-btn.loading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .submit-btn.loading::after {
+      content: '';
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-size: 24px;
-      color: white;
-      transition: transform 0.3s;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: spin 1s linear infinite;
     }
 
-    .amount-btn.selected::after {
-      transform: translate(-50%, -50%) scale(1);
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    .amount-btn:hover {
-      transform: translateY(-5px) scale(1.05);
+    /* === MICRO-INTERACTIONS === */
+    .form-group:hover label {
+      color: #88b04b;
+      transform: translateX(5px);
+    }
+
+    .form-card:hover::before {
+      height: 8px;
+      box-shadow: 0 0 20px rgba(168, 230, 207, 0.5);
+    }
+
+    /* === RESPONSIVE DYNAMIQUE === */
+    @media (max-width: 768px) {
+      .amounts {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      
+      .amount-btn {
+        padding: 15px 12px;
+        font-size: 14px;
+      }
+      
+      .form-card {
+        border-radius: 20px;
+        margin: 10px;
+      }
+      
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        transform: translateY(-2px) scale(1.01);
+      }
     }
   </style>
 
@@ -508,10 +677,11 @@ include __DIR__ . '/includes/header.php';
     $totalCollecte = 0;
     $nombreDons = 0;
     
-    // Calculer le total collecté ce mois
+    // Calculer le total collecté ce mois (seulement les dons validés)
     $currentMonth = date('Y-m');
     foreach ($allDons as $don) {
       if ($don['type_don'] === 'money' && $don['montant'] && 
+          $don['statut'] === 'validated' &&
           strpos($don['created_at'], $currentMonth) === 0) {
         $totalCollecte += $don['montant'];
         $nombreDons++;
@@ -567,8 +737,8 @@ include __DIR__ . '/includes/header.php';
           </span>
         </div>
         
-        <div class="progress-bar-container">
-          <div class="progress-bar-fill" style="width: <?= $pourcentageObjectif ?>%;">
+        <div style="background: #e9ecef; height: 40px; border-radius: 20px; overflow: hidden; position: relative;">
+          <div style="background: linear-gradient(90deg, #2c5f2d, #88b04b, #A8E6CF); height: 100%; width: <?= $pourcentageObjectif ?>%; transition: width 1s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; font-weight: 700; font-size: 16px;">
             <?= $pourcentageObjectif ?>%
           </div>
         </div>
@@ -580,13 +750,15 @@ include __DIR__ . '/includes/header.php';
       
       <div class="objectif-stats">
         <div class="stat-box">
+          <div class="stat-icon">🎯</div>
           <div class="stat-value"><?= number_format($restant, 0) ?> TND</div>
-          <div class="stat-label">🎯 Encore à collecter</div>
+          <div class="stat-label">Encore à collecter</div>
         </div>
         
         <div class="stat-box">
+          <div class="stat-icon">🌳</div>
           <div class="stat-value"><?= $nombreDons > 0 ? $nombreDons * 10 : 0 ?></div>
-          <div class="stat-label">� Arbres sauvés</div>
+          <div class="stat-label">Arbres sauvés</div>
         </div>
       </div>
       
@@ -665,6 +837,8 @@ include __DIR__ . '/includes/header.php';
               <?php endforeach; ?>
             </select>
             <span class="error-msg" id="type-don_error"></span>
+            
+
           </div>
 
           <!-- Champs Money -->
@@ -699,7 +873,7 @@ include __DIR__ . '/includes/header.php';
             
             <div class="form-group">
               <label for="cp-autre">Code postal *</label>
-              <input type="text" id="cp-autre" name="cp" placeholder="1000" maxlength="4">
+              <input type="text" id="cp-autre" name="cp" placeholder="1000">
               <span class="error-msg" id="cp-autre_error"></span>
             </div>
             
@@ -711,7 +885,7 @@ include __DIR__ . '/includes/header.php';
             
             <div class="form-group">
               <label for="tel-autre">Téléphone *</label>
-              <input type="text" id="tel-autre" name="tel" placeholder="98765432" maxlength="8">
+              <input type="text" id="tel-autre" name="tel" placeholder="98765432">
               <span class="error-msg" id="tel-autre_error"></span>
             </div>
             
@@ -764,7 +938,9 @@ include __DIR__ . '/includes/header.php';
             <span class="error-msg" id="email_error"></span>
           </div>
 
-          <button type="submit" class="submit-btn" id="submit-btn">Valider mon don</button>
+          <button type="submit" class="submit-btn" id="submit-btn">
+            <i class="fas fa-heart"></i> Valider mon don
+          </button>
         </div>
       </form>
     </div>

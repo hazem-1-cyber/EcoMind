@@ -1,22 +1,47 @@
-# Environment variables
+# Fichiers de configuration sensibles
 .env
+.env.local
+config/email_config_local.php
 
-# Vendor directory
-vendor/
+# Uploads (fichiers utilisateur)
+view/FrontOffice/images/uploads/dons/*.png
+view/FrontOffice/images/uploads/dons/*.jpg
+view/FrontOffice/images/uploads/dons/*.jpeg
+view/FrontOffice/images/uploads/dons/*.gif
+view/FrontOffice/images/uploads/dons/*.webp
+view/FrontOffice/images/uploads/receipts/*.pdf
 
-# Uploads
-uploads/dons/*.png
-uploads/dons/*.jpg
-uploads/dons/*.jpeg
-uploads/receipts/*.pdf
+# Mais garder les dossiers et .htaccess
+!view/FrontOffice/images/uploads/dons/.htaccess
+!view/FrontOffice/images/uploads/receipts/.htaccess
+!view/FrontOffice/images/uploads/dons/.gitkeep
+!view/FrontOffice/images/uploads/receipts/.gitkeep
 
-# IDE
-.vscode/
-.idea/
+# Dépendances
+model/vendor/
 
-# OS
+# Fichiers de développement et test
+test_*.php
+debug_*.php
+audit_*.php
+*.tmp
+*.log
+
+# Fichiers système
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/settings.json
+.idea/
+*.sublime-*
 
 # Logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

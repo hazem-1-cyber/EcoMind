@@ -86,6 +86,10 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                 <i class="fas fa-list"></i>
                 <span>Gestion des dons</span>
             </a>
+            <a href="corbeille.php" class="nav-item">
+                <i class="fas fa-trash-alt"></i>
+                <span>Corbeille</span>
+            </a>
             <a href="listcategorie.php" class="nav-item">
                 <i class="fas fa-tags"></i>
                 <span>Catégories</span>
@@ -210,9 +214,56 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                 transform: translateY(0);
             }
         }
+        
+        /* Styles pour les alertes */
+        .alert {
+            font-weight: 600;
+            border: 1px solid;
+            border-radius: 8px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
         </style>
 
         <div class="container">
+    <!-- Messages de notification -->
+    <?php if (isset($_GET['msg'])): ?>
+        <?php
+        $messages = [
+            'reject_success' => ['type' => 'success', 'text' => 'Don matériel rejeté avec succès et envoyé dans la corbeille.'],
+            'reject_error' => ['type' => 'danger', 'text' => 'Erreur lors du rejet du don.'],
+            'cannot_reject_money' => ['type' => 'warning', 'text' => 'Les dons monétaires ne peuvent pas être rejetés.'],
+            'don_not_found' => ['type' => 'danger', 'text' => 'Don non trouvé.'],
+            'don_not_pending' => ['type' => 'warning', 'text' => 'Seuls les dons en attente peuvent être rejetés.'],
+            'invalid_id' => ['type' => 'danger', 'text' => 'ID de don invalide.']
+        ];
+        
+        $msg = $_GET['msg'];
+        if (isset($messages[$msg])):
+        ?>
+        <div class="alert alert-<?= $messages[$msg]['type'] ?>" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-<?= $messages[$msg]['type'] === 'success' ? 'check-circle' : ($messages[$msg]['type'] === 'warning' ? 'exclamation-triangle' : 'times-circle') ?>"></i>
+            <?= $messages[$msg]['text'] ?>
+        </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
     <h1 class="page-title">Gestion des dons</h1>
     <p class="page-subtitle">Suivez et gérez tous les dons reçus pour les associations partenaires.</p>
 
@@ -281,7 +332,9 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                     <img src="../../<?= htmlspecialchars($don['image_don']) ?>" 
                          alt="Image du don" 
                          style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
-                         onclick="window.open('../../<?= htmlspecialchars($don['image_don']) ?>', '_blank')">
+                         onclick="window.open('../../<?= htmlspecialchars($don['image_don']) ?>', '_blank')"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                    <span style="color: #6c757d; font-size: 24px; display: none;">📷</span>
                   <?php else: ?>
                     <span style="color: #6c757d; font-size: 24px;">📷</span>
                   <?php endif; ?>
@@ -318,7 +371,9 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                   
                   <?php if ($don['statut'] === 'pending'): ?>
                     <a href="acceptdon.php?id=<?= $don['id'] ?>" class="btn-icon btn-validate" title="Accepter"><i class="fas fa-check"></i></a>
-                    <a href="rejectdon.php?id=<?= $don['id'] ?>" class="btn-icon btn-delete" title="Rejeter"><i class="fas fa-times"></i></a>
+                    <?php if ($don['type_don'] !== 'money'): ?>
+                      <a href="rejectdon.php?id=<?= $don['id'] ?>" class="btn-icon btn-delete" title="Rejeter (envoyer à la corbeille)" onclick="return confirm('Rejeter ce don matériel ? Il sera envoyé dans la corbeille.')"><i class="fas fa-times"></i></a>
+                    <?php endif; ?>
                   <?php endif; ?>
                 </td>
               </tr>

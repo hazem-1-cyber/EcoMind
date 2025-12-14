@@ -1,9 +1,0 @@
-{
-    "name": "ecomind/donation-system",
-    "description": "Système de dons avec paiement Stripe",
-    "require": {
-        "php": ">=7.4",
-        "stripe/stripe-php": "^10.0",
-        "phpmailer/phpmailer": "^6.8"
-    }
-}

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 session_start();
 
 try {
-    require_once __DIR__ . '/../../config/SettingsManager.php';
+    require_once __DIR__ . '/../../model/config/SettingsManager.php';
     require_once __DIR__ . '/../../config.php';
     $settingsManager = new SettingsManager();
 } catch (Exception $e) {
@@ -233,6 +233,10 @@ unset($_SESSION['success_message']);
             <a href="lisdon.php" class="nav-item">
                 <i class="fas fa-list"></i>
                 <span>Gestion des dons</span>
+            </a>
+            <a href="corbeille.php" class="nav-item">
+                <i class="fas fa-trash-alt"></i>
+                <span>Corbeille</span>
             </a>
             <a href="listcategorie.php" class="nav-item">
                 <i class="fas fa-tags"></i>

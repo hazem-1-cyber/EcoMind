@@ -182,6 +182,14 @@ $totalDons = count($dons);
                 <i class="fas fa-list"></i>
                 <span>Gestion des dons</span>
             </a>
+            <a href="corbeille.php" class="nav-item">
+                <i class="fas fa-trash-alt"></i>
+                <span>Corbeille</span>
+            </a>
+            <a href="listcategorie.php" class="nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Catégories</span>
+            </a>
             <a href="associations.php" class="nav-item">
                 <i class="fas fa-building"></i>
                 <span>Associations</span>

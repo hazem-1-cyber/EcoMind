@@ -30,14 +30,14 @@ document.getElementById("type-don").addEventListener("change", function () {
         autreFields.querySelectorAll("input, select, textarea").forEach(input => input.setAttribute("disabled", "disabled"));
     }
 
-    console.log("Type de don sélectionné:", value); // Debug
+
 
     if (value === "money") {
         // Afficher les champs spécifiques pour les dons d'argent
         if (moneyFields) {
             moneyFields.style.display = "block";
             moneyFields.querySelectorAll("input, select, textarea").forEach(input => input.removeAttribute("disabled"));
-            console.log("Affichage des champs argent");
+
             
             // Initialiser le message du montant APRÈS l'affichage des champs
             setTimeout(() => {
@@ -50,7 +50,7 @@ document.getElementById("type-don").addEventListener("change", function () {
         if (autreFields) {
             autreFields.style.display = "block";
             autreFields.querySelectorAll("input, select, textarea").forEach(input => input.removeAttribute("disabled"));
-            console.log("Affichage des champs autres types");
+
         }
         setMsg("type-don_error", "✓ Type sélectionné", true);
     } else {
@@ -61,30 +61,19 @@ document.getElementById("type-don").addEventListener("change", function () {
 // === Fonction pour obtenir le montant minimum ===
 function getMinAmount() {
     const montantInput = document.getElementById("custom-amount");
-    console.log("🔍 getMinAmount() - Élément trouvé:", montantInput ? "OUI" : "NON");
     
     if (montantInput) {
         const minAttr = montantInput.getAttribute('data-min');
-        console.log("🔍 Attribut data-min:", minAttr);
-        console.log("🔍 Type de data-min:", typeof minAttr);
         
         if (minAttr) {
             const min = parseFloat(minAttr);
-            console.log("🔍 Après parseFloat:", min);
-            console.log("🔍 isNaN?:", isNaN(min));
             
             if (!isNaN(min) && min > 0) {
-                console.log("✅ Montant minimum récupéré:", min);
                 return min;
             }
-        } else {
-            console.error("❌ data-min est NULL ou vide!");
         }
-    } else {
-        console.error("❌ Élément custom-amount NON TROUVÉ!");
     }
     
-    console.warn("⚠️ FALLBACK: Utilisation de 10 par défaut");
     return 10;
 }
 
@@ -97,7 +86,7 @@ function getCurrency() {
             const label = formGroup.querySelector('label');
             if (label) {
                 const match = label.textContent.match(/\(([^)]+)\)/);
-                console.log("Devise extraite:", match ? match[1] : 'TND');
+
                 if (match) {
                     return match[1];
                 }
@@ -117,7 +106,7 @@ document.querySelectorAll(".amount-btn").forEach(btn => {
             const selectedAmount = parseFloat(this.dataset.value);
             const currency = getCurrency();
             
-            console.log(`Bouton cliqué: ${selectedAmount}, Min: ${minAmount}, Devise: ${currency}`);
+
             
             // Vérifier si le montant du bouton est valide
             if (selectedAmount >= minAmount) {
@@ -144,9 +133,7 @@ function initMontantMessage() {
         const currency = getCurrency();
         const infoMsg = document.getElementById("montant_error");
         
-        console.log("=== INITIALISATION MESSAGE MONTANT ===");
-        console.log("Montant minimum:", minAmount);
-        console.log("Devise:", currency);
+
         
         if (infoMsg) {
             infoMsg.innerHTML = `<i class="fas fa-info-circle"></i> Montant minimum: ${minAmount} ${currency}`;
@@ -171,7 +158,7 @@ if (customAmountInput) {
         this.value = value;
         const num = parseFloat(value);
 
-        console.log(`Input montant: ${num}, Min: ${minAmount}, Devise: ${currency}`);
+
 
         const submitBtn = document.getElementById("submit-btn");
 
@@ -215,7 +202,7 @@ if (customAmountInput) {
         const value = this.value;
         const num = parseFloat(value);
         
-        console.log(`Blur - Montant: ${num}, Min: ${minAmount}`);
+
         
         if (value && num < minAmount) {
             // Afficher une alerte plus visible
@@ -337,14 +324,13 @@ form.addEventListener("submit", function (event) {
     let isValid = true;
     const typeDon = document.getElementById("type-don").value;
 
-    console.log("=== DÉBUT VALIDATION FORMULAIRE ===");
-    console.log("Type de don:", typeDon);
+
 
     // Vérifier Type de don
     if (!typeDon) {
         setMsg("type-don_error", "✗ Type de don requis", false);
         isValid = false;
-        console.log("❌ Type de don manquant");
+
     }
 
     // Si type = money
@@ -354,22 +340,22 @@ form.addEventListener("submit", function (event) {
         const minAmount = getMinAmount();
         const currency = getCurrency();
         
-        console.log(`Validation montant - Saisi: ${montant}, Min requis: ${minAmount}, Devise: ${currency}`);
+
         
         if (!montant || montant.trim() === "") {
-            console.log("❌ Montant vide");
+
             setMsg("montant_error", `✗ Veuillez entrer un montant`, false);
             isValid = false;
         } else {
             const montantNum = parseFloat(montant);
-            console.log(`Montant numérique: ${montantNum}`);
+
             
             if (isNaN(montantNum)) {
-                console.log("❌ Montant invalide (pas un nombre)");
+
                 setMsg("montant_error", `✗ Montant invalide`, false);
                 isValid = false;
             } else if (montantNum < minAmount) {
-                console.log(`❌ Montant trop petit: ${montantNum} < ${minAmount}`);
+
                 setMsg("montant_error", `✗ Le montant doit être au moins ${minAmount} ${currency}`, false);
                 isValid = false;
                 
@@ -398,16 +384,16 @@ form.addEventListener("submit", function (event) {
                 }
                 
                 // BLOQUER COMPLÈTEMENT - Ne jamais soumettre
-                console.log("🛑 SOUMISSION BLOQUÉE - Montant invalide");
+
                 return false;
             } else {
-                console.log(`✅ Montant valide: ${montantNum} >= ${minAmount}`);
+
             }
         }
         
         // Si montant invalide, ARRÊTER ICI
         if (!isValid) {
-            console.log("🛑 SOUMISSION BLOQUÉE - Validation échouée");
+    
             return false;
         }
     }
@@ -452,12 +438,11 @@ form.addEventListener("submit", function (event) {
         isValid = false;
     }
 
-    console.log("=== FIN VALIDATION ===");
-    console.log("Résultat validation:", isValid ? "✅ VALIDE" : "❌ INVALIDE");
+
 
     // Si PAS valide, BLOQUER COMPLÈTEMENT
     if (!isValid) {
-        console.log("🛑 SOUMISSION BLOQUÉE - Formulaire invalide");
+
         
         // Faire défiler jusqu'à la première erreur
         const firstError = document.querySelector('.error-msg[style*="color: red"], .error-msg[style*="color:red"]');
@@ -470,7 +455,7 @@ form.addEventListener("submit", function (event) {
     }
 
     // Si VALIDE, soumettre le formulaire
-    console.log("✅ SOUMISSION AUTORISÉE - Formulaire valide");
+
     
     // Si don d'argent, s'assurer que le champ montant et livraison sont correctement renseignés
     if (typeDon === 'money') {
@@ -479,7 +464,7 @@ form.addEventListener("submit", function (event) {
         if (montantInput) {
             // garantir que le montant est transmis avec le bon nom
             montantInput.name = 'montant';
-            console.log("Montant à soumettre:", montantInput.value);
+
         }
         if (hiddenLivraison) {
             hiddenLivraison.value = 'en_ligne';
@@ -488,7 +473,7 @@ form.addEventListener("submit", function (event) {
     }
 
     // SOUMETTRE LE FORMULAIRE
-    console.log("📤 Soumission du formulaire...");
+
     this.submit();
 });
 

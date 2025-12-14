@@ -3,31 +3,10 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Charger les variables d'environnement depuis .env
-$envFile = __DIR__ . '/.env';
-if (file_exists($envFile)) {
-    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        // Ignorer les commentaires
-        if (strpos(trim($line), '#') === 0) {
-            continue;
-        }
-        
-        // Parser la ligne KEY=VALUE
-        if (strpos($line, '=') !== false) {
-            list($key, $value) = explode('=', $line, 2);
-            $key = trim($key);
-            $value = trim($value);
-            
-            // Définir la variable d'environnement
-            if (!defined($key)) {
-                define($key, $value);
-            }
-        }
-    }
-}
+// Configuration directe (sans fichier .env)
+// Modifiez ces valeurs selon vos besoins
 
-// Configuration Stripe - Utiliser les valeurs du .env ou des valeurs par défaut
+// Configuration Stripe - Remplacez par vos vraies clés
 if (!defined('STRIPE_PUBLIC_KEY')) {
     define('STRIPE_PUBLIC_KEY', 'pk_test_VOTRE_CLE_PUBLIQUE_ICI');
 }

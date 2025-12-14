@@ -119,6 +119,10 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                 <i class="fas fa-list"></i>
                 <span>Gestion des dons</span>
             </a>
+            <a href="corbeille.php" class="nav-item">
+                <i class="fas fa-trash-alt"></i>
+                <span>Corbeille</span>
+            </a>
             <a href="listcategorie.php" class="nav-item">
                 <i class="fas fa-tags"></i>
                 <span>Catégories</span>
@@ -380,12 +384,14 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                 </td>
                 <td><?= htmlspecialchars($don['ville'] ?? '-') ?></td>
                 <td>
-                  <?php if (!empty($don['image_path'])): ?>
-                    <img src="../../<?= htmlspecialchars($don['image_path']) ?>" 
+                  <?php if (!empty($don['image_don'])): ?>
+                    <img src="../../<?= htmlspecialchars($don['image_don']) ?>" 
                          alt="Image du don" 
                          style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
-                         onclick="showImageModal('../../<?= htmlspecialchars($don['image_path']) ?>')"
-                         title="Cliquer pour agrandir">
+                         onclick="showImageModal('../../<?= htmlspecialchars($don['image_don']) ?>')"
+                         title="Cliquer pour agrandir"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                    <span style="color: #6c757d; font-size: 24px; display: none;">📷</span>
                   <?php else: ?>
                     <span style="color: #999; font-size: 12px;">Aucune image</span>
                   <?php endif; ?>
@@ -682,10 +688,10 @@ $pourcentageValides = $totalDons > 0 ? round(($donsValides / $totalDons) * 100) 
                     </div>
                 ` : ''}
                 
-                ${don.image_path ? `
+                ${don.image_don ? `
                     <div style="margin-bottom: 15px;">
                         <strong style="color: #666;">Image du don:</strong><br>
-                        <img src="../../${don.image_path}" alt="Image du don" style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showImageModal('../../${don.image_path}')">
+                        <img src="../../${don.image_don}" alt="Image du don" style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer;" onclick="showImageModal('../../${don.image_don}')" onerror="this.style.display='none'">
                     </div>
                 ` : ''}
                 

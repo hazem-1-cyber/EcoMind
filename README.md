@@ -1,68 +1,176 @@
-# EcoMind - Plateforme de Dons Écologiques
+# 🌱 EcoMind - Plateforme de Dons Écologiques
 
-## 🌱 Description
-Plateforme web permettant de gérer des dons (monétaires et matériels) pour des associations écologiques tunisiennes.
+EcoMind est une plateforme web moderne permettant de gérer des dons écologiques (monétaires et matériels) avec un système de paiement intégré et une interface d'administration complète.
 
-## ⚙️ Fonctionnalités Principales
+## ✨ Fonctionnalités
 
-### Système de Paramètres en Temps Réel
-- **Validation automatique des dons monétaires** : 
-  - Quand activé : tous les dons monétaires en attente sont validés automatiquement
-  - Les nouveaux dons monétaires sont validés directement après paiement
-  - Quand désactivé : les dons restent en attente et nécessitent une validation manuelle
+### 🎯 Front-Office
+- **Formulaire de don** avec validation en temps réel
+- **Paiements sécurisés** via Stripe (cartes bancaires)
+- **Dons monétaires et matériels** (panneaux solaires, électronique, etc.)
+- **Upload d'images** pour les dons matériels
+- **Consultation des dons** par email
+- **Génération automatique de reçus PDF**
 
-- **Montant minimum configurable** : Définir le montant minimum accepté (en TND)
-- **Notifications** : Activer/désactiver les notifications par email
+### 📊 Back-Office
+- **Dashboard temps réel** avec statistiques et graphiques
+- **Histogramme d'évolution** des dons (jours/mois/années)
+- **Gestion des dons** (validation, rejet, corbeille)
+- **Système de corbeille** avec restauration
+- **Paramètres configurables** (montants, objectifs, etc.)
+- **Notifications email** automatiques
 
-### Types de Dons
-- **Dons monétaires** : Paiement en ligne via Stripe (TND uniquement)
-- **Panneaux solaires** : Don de matériel écologique
-- **Matériel** : Don d'équipements divers
-- **Autre** : Autres types de dons avec description
-
-## 🔧 Configuration
-
-### Paramètres (BackOffice)
-Accédez à la page **Paramètres** pour configurer :
-1. Montant minimum de don (TND)
-2. Validation automatique des dons monétaires
-3. Préférences de notifications
-
-### Paiement Stripe
-- Mode TEST pour développement/démonstration
-- Devise fixe : TND (Dinar Tunisien)
-- Paiement sécurisé via Stripe
-
-## 📁 Structure
-```
-├── config/
-│   ├── SettingsManager.php    # Gestion des paramètres
-│   └── settings.json           # Fichier de configuration
-├── controller/
-│   ├── DonController.php       # Logique des dons
-│   └── categorieController.php
-├── model/
-│   ├── DonModel.php           # Modèle de données
-│   └── ParametreModel.php
-├── view/
-│   ├── BackOffice/            # Interface admin
-│   └── FrontOffice/           # Interface publique
-└── database.sql               # Structure de la base
-```
+### 🔧 Technique
+- **Architecture MVC** stricte
+- **Paiements Stripe** intégrés
+- **Emails automatiques** (PHPMailer)
+- **Génération PDF** (DomPDF)
+- **Base de données MySQL**
+- **Interface responsive**
 
 ## 🚀 Installation
-1. Importer `database.sql` dans votre base MySQL
-2. Configurer les clés Stripe dans `config.php`
-3. Vérifier les permissions du dossier `config/`
-4. Accéder à l'interface via votre serveur web
 
-## 💳 Mode Test Stripe
-Utilisez ces cartes de test :
-- Succès : `4242 4242 4242 4242`
-- Date : `12/25`
-- CVC : `123`
+### Prérequis
+- PHP 7.4+
+- MySQL 5.7+
+- Composer
+- Serveur web (Apache/Nginx)
 
-## 📝 Notes
-- Projet étudiant - Mode TEST uniquement
-- Devise fixe : TND (Tunisie)
-- Validation automatique configurable en temps réel
+### 1. Cloner le projet
+\`\`\`bash
+git clone https://github.com/votre-username/ecomind.git
+cd ecomind
+\`\`\`
+
+### 2. Installer les dépendances
+\`\`\`bash
+composer install
+\`\`\`
+
+### 3. Configuration de la base de données
+\`\`\`bash
+# Créer la base de données
+mysql -u root -p < model/database.sql
+\`\`\`
+
+### 4. Configuration
+\`\`\`bash
+# Copier le fichier de configuration
+cp .env.example .env
+
+# Éditer .env avec vos paramètres
+nano .env
+\`\`\`
+
+### 5. Configuration Stripe
+1. Créer un compte sur [Stripe](https://stripe.com)
+2. Récupérer vos clés API (test ou live)
+3. Les ajouter dans \`config.php\`
+
+### 6. Configuration Email
+1. Configurer Gmail avec un mot de passe d'application
+2. Modifier \`model/config/email_config.php\`
+
+## 📁 Structure du Projet
+
+\`\`\`
+ecomind/
+├── model/                          # Modèles et logique métier
+│   ├── config/                     # Configuration
+│   │   ├── SettingsManager.php     # Gestion des paramètres
+│   │   ├── settings.json           # Paramètres JSON
+│   │   └── email_config.php        # Configuration email
+│   ├── helpers/                    # Classes utilitaires
+│   │   ├── EmailHelper.php         # Envoi d'emails
+│   │   └── ReceiptHelper.php       # Génération PDF
+│   ├── vendor/                     # Dépendances Composer
+│   ├── DonModel.php               # Modèle des dons
+│   ├── categorieModel.php         # Modèle des catégories
+│   └── database.sql               # Structure BDD
+├── view/                          # Vues et interface
+│   ├── BackOffice/                # Interface d'administration
+│   │   ├── dashboard.php          # Tableau de bord
+│   │   ├── dons.php              # Gestion des dons
+│   │   ├── corbeille.php         # Corbeille
+│   │   └── parametres.php        # Paramètres
+│   └── FrontOffice/              # Interface publique
+│       ├── addDon.php            # Formulaire de don
+│       ├── paiement.php          # Page de paiement
+│       ├── consulterdonpersonnel.php # Consultation
+│       └── images/               # Ressources
+│           └── uploads/          # Fichiers uploadés
+├── controller/                    # Contrôleurs
+│   ├── DonController.php         # Logique des dons
+│   └── categorieController.php   # Logique des catégories
+└── config.php                    # Configuration principale
+\`\`\`
+
+## 🎨 Fonctionnalités Détaillées
+
+### Dashboard Temps Réel
+- **Statistiques en direct** : Total des dons, montants collectés
+- **Graphiques interactifs** : Évolution par jours/mois/années
+- **Objectifs de collecte** : Suivi des objectifs mensuels
+- **Notifications** : Alertes pour les dons en attente
+
+### Système de Paiement
+- **Stripe intégré** : Paiements sécurisés par carte
+- **Multi-devises** : Support TND avec conversion USD
+- **Reçus automatiques** : Génération PDF et envoi email
+- **Validation automatique** : Option configurable
+
+### Gestion des Dons
+- **Types multiples** : Argent, matériel, électronique, etc.
+- **Upload d'images** : Photos des dons matériels
+- **Workflow complet** : Pending → Validated/Rejected
+- **Corbeille** : Système de suppression/restauration
+
+## 🔒 Sécurité
+
+- **Validation côté serveur** : Toutes les données sont validées
+- **Protection CSRF** : Sessions sécurisées
+- **Sanitisation** : Échappement des données utilisateur
+- **Clés API sécurisées** : Configuration externe
+- **Uploads sécurisés** : Validation des types de fichiers
+
+## 🧪 Tests
+
+### Cartes de test Stripe
+- **Succès** : \`4242 4242 4242 4242\`
+- **Échec** : \`4000 0000 0000 0002\`
+- **CVV** : n'importe quel 3 chiffres
+- **Date** : n'importe quelle date future
+
+## 📧 Configuration Email
+
+### Gmail
+1. Activer la validation en 2 étapes
+2. Générer un mot de passe d'application
+3. Utiliser ce mot de passe dans la configuration
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (\`git checkout -b feature/AmazingFeature\`)
+3. Commit vos changements (\`git commit -m 'Add AmazingFeature'\`)
+4. Push vers la branche (\`git push origin feature/AmazingFeature\`)
+5. Ouvrir une Pull Request
+
+## 📝 Licence
+
+Ce projet est sous licence MIT. Voir le fichier \`LICENSE\` pour plus de détails.
+
+## 👥 Auteurs
+
+- **Votre Nom** - *Développement initial* - [VotreGitHub](https://github.com/votre-username)
+
+## 🙏 Remerciements
+
+- [Stripe](https://stripe.com) pour l'API de paiement
+- [PHPMailer](https://github.com/PHPMailer/PHPMailer) pour l'envoi d'emails
+- [DomPDF](https://github.com/dompdf/dompdf) pour la génération PDF
+- [Chart.js](https://www.chartjs.org/) pour les graphiques
+
+---
+
+**🌱 EcoMind - Pour un avenir plus vert ! 🌍**

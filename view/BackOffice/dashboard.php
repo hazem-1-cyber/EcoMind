@@ -6,7 +6,8 @@ $dons = $donCtrl->listDons()->fetchAll();
 
 // Calculer les statistiques
 $totalDons = count($dons);
-$totalCollecte = 0;
+$totalCollecteGlobal = 0; // Montant total de toutes les années
+$totalCollecteMoisCourant = 0; // Montant du mois courant pour l'objectif
 $donsValides = 0;
 $donsPending = 0;
 $donsRejected = 0;
@@ -14,13 +15,20 @@ $donsCancelled = 0;
 
 // Collecte par mois
 $currentYear = date('Y');
+$currentMonth = date('Y-m');
 $collecteParMois = array_fill(1, 12, 0);
 
 foreach ($dons as $don) {
-    if ($don['type_don'] === 'money' && $don['montant']) {
-        $totalCollecte += $don['montant'];
+    if ($don['type_don'] === 'money' && $don['montant'] && $don['statut'] === 'validated') {
+        // Calculer le montant total global (toutes années confondues)
+        $totalCollecteGlobal += $don['montant'];
         
-        // Calculer la collecte par mois
+        // Calculer le total collecté pour le mois courant (pour l'objectif mensuel)
+        if (strpos($don['created_at'], $currentMonth) === 0) {
+            $totalCollecteMoisCourant += $don['montant'];
+        }
+        
+        // Calculer la collecte par mois pour le graphique (année courante)
         $month = (int)date('m', strtotime($don['created_at']));
         $year = date('Y', strtotime($don['created_at']));
         if ($year == $currentYear) {
@@ -82,6 +90,10 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
             <a href="lisdon.php" class="nav-item">
                 <i class="fas fa-list"></i>
                 <span>Gestion des dons</span>
+            </a>
+            <a href="corbeille.php" class="nav-item">
+                <i class="fas fa-trash-alt"></i>
+                <span>Corbeille</span>
             </a>
             <a href="listcategorie.php" class="nav-item">
                 <i class="fas fa-tags"></i>
@@ -202,6 +214,39 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
                 transform: translateY(0);
             }
         }
+
+        /* Styles pour les boutons de période */
+        .period-btn {
+            padding: 8px 16px;
+            border: 2px solid #A8E6CF;
+            background: white;
+            color: #2c5f2d;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .period-btn:hover {
+            background: rgba(168, 230, 207, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 230, 207, 0.3);
+        }
+
+        .period-btn.active {
+            background: linear-gradient(135deg, #2c5f2d, #88b04b);
+            color: white;
+            border-color: #2c5f2d;
+            box-shadow: 0 4px 15px rgba(44, 95, 45, 0.3);
+        }
+
+        .period-btn.active:hover {
+            background: linear-gradient(135deg, #88b04b, #A8E6CF);
+        }
         </style>
 
         <script>
@@ -244,7 +289,7 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
                     <i class="fas fa-coins"></i>
                 </div>
                 <div class="stat-content">
-                    <h3><?= number_format($totalCollecte, 2) ?> TND</h3>
+                    <h3><?= number_format($totalCollecteGlobal, 2) ?> TND</h3>
                     <p>Montant collecté</p>
                 </div>
             </div>
@@ -278,17 +323,17 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
             <div style="padding: 25px;">
                 <?php
                 // Objectif mensuel (peut être configuré dans settings.json)
-                require_once __DIR__ . "/../../config/SettingsManager.php";
+                require_once __DIR__ . "/../../model/config/SettingsManager.php";
                 $settingsManager = new SettingsManager();
                 $objectifMensuel = $settingsManager->get('objectif_mensuel', 10000);
-                $pourcentageObjectif = min(100, round(($totalCollecte / $objectifMensuel) * 100));
+                $pourcentageObjectif = min(100, round(($totalCollecteMoisCourant / $objectifMensuel) * 100));
                 ?>
                 
                 <div style="margin-bottom: 30px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <span style="font-weight: 600; color: #2c5f2d;">Objectif mensuel</span>
                         <span style="font-weight: 700; color: #2c5f2d; font-size: 18px;">
-                            <?= number_format($totalCollecte, 2) ?> / <?= number_format($objectifMensuel, 2) ?> TND
+                            <?= number_format($totalCollecteMoisCourant, 2) ?> / <?= number_format($objectifMensuel, 2) ?> TND
                         </span>
                     </div>
                     <div style="background: #e9ecef; height: 30px; border-radius: 15px; overflow: hidden; position: relative;">
@@ -300,7 +345,7 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
                         <?php if ($pourcentageObjectif >= 100): ?>
                             🎉 Objectif atteint ! Félicitations !
                         <?php else: ?>
-                            Il reste <?= number_format($objectifMensuel - $totalCollecte, 2) ?> TND pour atteindre l'objectif
+                            Il reste <?= number_format($objectifMensuel - $totalCollecteMoisCourant, 2) ?> TND pour atteindre l'objectif
                         <?php endif; ?>
                     </div>
                 </div>
@@ -308,7 +353,7 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
                 <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 20px; border-radius: 12px; text-align: center;">
                         <div style="font-size: 28px; font-weight: 700; color: #1976d2;">
-                            <?= number_format($totalCollecte / max(1, $donsValides), 2) ?> TND
+                            <?= number_format($totalCollecteGlobal / max(1, $donsValides), 2) ?> TND
                         </div>
                         <div style="color: #1565c0; font-size: 14px; margin-top: 5px;">Don moyen</div>
                     </div>
@@ -382,7 +427,18 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
         <div class="charts-grid">
             <div class="chart-card">
                 <div class="chart-header">
-                    <h2>Évolution des dons</h2>
+                    <h2>📈 Évolution des dons</h2>
+                    <div class="period-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="period-btn active" data-period="days" onclick="changePeriod('days')">
+                            <i class="fas fa-calendar-day"></i> Jours
+                        </button>
+                        <button class="period-btn" data-period="months" onclick="changePeriod('months')">
+                            <i class="fas fa-calendar-alt"></i> Mois
+                        </button>
+                        <button class="period-btn" data-period="years" onclick="changePeriod('years')">
+                            <i class="fas fa-calendar"></i> Années
+                        </button>
+                    </div>
                 </div>
                 <div class="chart-body">
                     <canvas id="donationsChart"></canvas>
@@ -567,36 +623,168 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
         }
     });
 
-    // Chart 2: Évolution des dons
-    const donationsCtx = document.getElementById('donationsChart').getContext('2d');
-    new Chart(donationsCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-            datasets: [{
-                label: 'Dons reçus',
-                data: [12, 19, 15, 25, 22, <?= $totalDons ?>],
-                borderColor: '#A8E6CF',
-                backgroundColor: 'rgba(168, 230, 207, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+    // Préparer les données pour l'histogramme d'évolution
+    function prepareEvolutionData() {
+        const today = new Date();
+        const currentPeriod = document.querySelector('.period-btn.active').dataset.period;
+        
+        let labels = [];
+        let data = [];
+        
+        if (currentPeriod === 'days') {
+            // Derniers 30 jours
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                labels.push(date.getDate() + '/' + (date.getMonth() + 1));
+                
+                // Compter les dons pour cette date
+                const count = dons.filter(don => don.created_at.startsWith(dateStr)).length;
+                data.push(count);
+            }
+        } else if (currentPeriod === 'months') {
+            // Derniers 12 mois
+            const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+            for (let i = 11; i >= 0; i--) {
+                const date = new Date(today);
+                date.setMonth(date.getMonth() - i);
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+                const monthStr = year + '-' + (month < 10 ? '0' + month : month);
+                
+                labels.push(months[date.getMonth()] + ' ' + year);
+                
+                // Compter les dons pour ce mois
+                const count = dons.filter(don => don.created_at.startsWith(monthStr)).length;
+                data.push(count);
+            }
+        } else if (currentPeriod === 'years') {
+            // Dernières 5 années
+            const currentYear = today.getFullYear();
+            for (let i = 4; i >= 0; i--) {
+                const year = currentYear - i;
+                labels.push(year.toString());
+                
+                // Compter les dons pour cette année
+                const count = dons.filter(don => don.created_at.startsWith(year.toString())).length;
+                data.push(count);
             }
         }
-    });
+        
+        return { labels, data };
+    }
+
+    // Chart 2: Histogramme d'évolution des dons
+    let donationsChart;
+    const donationsCtx = document.getElementById('donationsChart').getContext('2d');
+    
+    function createEvolutionChart() {
+        const evolutionData = prepareEvolutionData();
+        
+        if (donationsChart) {
+            donationsChart.destroy();
+        }
+        
+        donationsChart = new Chart(donationsCtx, {
+            type: 'bar',
+            data: {
+                labels: evolutionData.labels,
+                datasets: [{
+                    label: 'Nombre de dons',
+                    data: evolutionData.data,
+                    backgroundColor: 'rgba(168, 230, 207, 0.8)',
+                    borderColor: '#2c5f2d',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    hoverBackgroundColor: 'rgba(136, 176, 75, 0.9)',
+                    hoverBorderColor: '#88b04b',
+                    hoverBorderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(1, 50, 32, 0.95)',
+                        titleColor: '#A8E6CF',
+                        bodyColor: '#ffffff',
+                        borderColor: '#A8E6CF',
+                        borderWidth: 2,
+                        padding: 15,
+                        titleFont: { size: 16, weight: 'bold' },
+                        bodyFont: { size: 14 },
+                        callbacks: {
+                            title: function(context) {
+                                const period = document.querySelector('.period-btn.active').dataset.period;
+                                if (period === 'days') return 'Jour: ' + context[0].label;
+                                if (period === 'months') return 'Mois: ' + context[0].label;
+                                return 'Année: ' + context[0].label;
+                            },
+                            label: function(context) {
+                                const count = context.parsed.y;
+                                return count + ' don' + (count > 1 ? 's' : '') + ' reçu' + (count > 1 ? 's' : '');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            color: '#6c757d',
+                            font: { size: 12 }
+                        },
+                        grid: {
+                            color: 'rgba(108, 117, 125, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#6c757d',
+                            font: { size: 12 },
+                            maxRotation: 45
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+    }
+
+    // Fonction pour changer la période
+    function changePeriod(period) {
+        // Mettre à jour les boutons
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-period="${period}"]`).classList.add('active');
+        
+        // Recréer le graphique avec les nouvelles données
+        createEvolutionChart();
+    }
+
+    // Initialiser le graphique d'évolution
+    createEvolutionChart();
+
+    // Rendre la fonction changePeriod accessible globalement
+    window.changePeriod = changePeriod;
 </script>
 
 </body>
