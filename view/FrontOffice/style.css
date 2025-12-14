@@ -493,6 +493,9 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 8px 25px rgba(168, 230, 207, 0.4);
     position: relative;
     overflow: hidden;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .submit-btn::before {
@@ -791,22 +794,9 @@ body.consult-page {
 }
 
 /* === BUTTON IMPROVEMENTS === */
-.submit-btn.btn-secondary {
-    background: linear-gradient(135deg, rgba(168, 230, 207, 0.8) 0%, rgba(168, 230, 207, 0.6) 100%);
-    color: #013220;
-    border: 2px solid #A8E6CF;
-    margin-top: 15px;
-    font-weight: 600;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 6px 20px rgba(168, 230, 207, 0.3);
-}
+/* Removed btn-secondary styles to ensure consistent button appearance */
 
-.submit-btn.btn-secondary:hover {
-    background: linear-gradient(135deg, #A8E6CF 0%, rgba(168, 230, 207, 0.9) 100%);
-    transform: scale(1.03) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(168, 230, 207, 0.4);
-    border-color: #013220;
-}
+/* Styles supprimés - bouton "Faire un nouveau don" retiré */
 
 /* === RESULTS SECTION IMPROVEMENTS === */
 .results-section {

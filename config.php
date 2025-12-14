@@ -6,12 +6,13 @@ error_reporting(E_ALL);
 // Configuration directe (sans fichier .env)
 // Modifiez ces valeurs selon vos besoins
 
-// Configuration Stripe - Remplacez par vos vraies clés
+// Configuration Stripe - REMPLACEZ PAR VOS CLÉS DE TEST
+// Obtenez vos clés sur : https://dashboard.stripe.com/test/apikeys
 if (!defined('STRIPE_PUBLIC_KEY')) {
-    define('STRIPE_PUBLIC_KEY', 'pk_test_VOTRE_CLE_PUBLIQUE_ICI');
+    define('STRIPE_PUBLIC_KEY', 'pk_test_REMPLACEZ_PAR_VOTRE_CLE_PUBLIQUE');
 }
 if (!defined('STRIPE_SECRET_KEY')) {
-    define('STRIPE_SECRET_KEY', 'sk_test_VOTRE_CLE_SECRETE_ICI');
+    define('STRIPE_SECRET_KEY', 'sk_test_REMPLACEZ_PAR_VOTRE_CLE_SECRETE');
 }
 
 // Configuration du destinataire des paiements

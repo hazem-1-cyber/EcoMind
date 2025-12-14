@@ -220,9 +220,6 @@ if (isset($_GET['search']) && isset($_GET['email']) && !empty($_GET['email'])) {
         <button type="submit" class="submit-btn">
           <i class="fas fa-search"></i> Rechercher mes dons
         </button>
-        <a href="addDon.php" class="submit-btn btn-secondary">
-          <i class="fas fa-plus-circle"></i> Faire un nouveau don
-        </a>
       </form>
     </div>
   </div>
