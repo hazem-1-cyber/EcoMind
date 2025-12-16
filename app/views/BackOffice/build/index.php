@@ -24,7 +24,93 @@
   <link
     href="./assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5"
     rel="stylesheet" />
+
+
+
+
+
+
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
+<style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles pour les boutons de période */
+        .period-btn {
+            padding: 8px 16px;
+            border: 2px solid #A8E6CF;
+            background: white;
+            color: #2c5f2d;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .period-btn:hover {
+            background: rgba(168, 230, 207, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 230, 207, 0.3);
+        }
+
+        .period-btn.active {
+            background: linear-gradient(135deg, #2c5f2d, #88b04b);
+            color: white;
+            border-color: #2c5f2d;
+            box-shadow: 0 4px 15px rgba(44, 95, 45, 0.3);
+        }
+
+        .period-btn.active:hover {
+            background: linear-gradient(135deg, #88b04b, #A8E6CF);
+        }
+        </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <body
   class="m-0 font-sans text-base antialiased font-normal leading-default bg-gray-50 text-slate-500">
@@ -101,150 +187,139 @@
   $users = $controller->showusers();
   ?>
 
-  <!-- sidenav  -->
-  <aside
-    class="max-w-62.5 ease-nav-brand z-990 fixed inset-y-0 my-4 ml-4 block w-full -translate-x-full flex-wrap items-center justify-between overflow-y-auto rounded-2xl border-0 bg-white p-0 antialiased shadow-none transition-transform duration-200 xl:left-0 xl:translate-x-0 xl:bg-transparent">
-    <div class="h-19.5">
-      <i
-        class="absolute top-0 right-0 hidden p-4 opacity-50 cursor-pointer fas fa-times text-slate-400 xl:hidden"
-        sidenav-close></i>
-      <a
-        class="block px-8 py-6 m-0 text-sm whitespace-nowrap text-slate-700"
-        href="javascript:;"
-        target="_blank">
-        <img
-          src="./assets/img/logo-ct.png"
-          class="inline h-full max-w-full transition-all duration-200 ease-nav-brand max-h-8"
-          alt="main_logo" />
-        <span
-          class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">Soft UI Dashboard</span>
-      </a>
-    </div>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="images/logo-ecomind.png" alt="EcoMind Logo" style="width: 50px; height: 50px; object-fit: contain;">
+                </div>
+                <div class="logo-text">EcoMind</div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="dashboard.php" class="nav-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="dons.php" class="nav-item">
+                <i class="fas fa-hand-holding-heart"></i>
+                <span>Tous les dons</span>
+            </a>
+            <a href="lisdon.php" class="nav-item">
+                <i class="fas fa-list"></i>
+                <span>Gestion des dons</span>
+            </a>
+            <a href="corbeille.php" class="nav-item">
+                <i class="fas fa-trash-alt"></i>
+                <span>Corbeille</span>
+            </a>
+            <a href="listcategorie.php" class="nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Catégories</span>
+            </a>
+            <a href="associations.php" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Associations</span>
+            </a>
+            <a href="statistiques.php" class="nav-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Statistiques</span>
+            </a>
+            <a href="parametres.php" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </aside>
 
-    <hr
-      class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
 
-    <div
-      class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
-      <ul class="flex flex-col pl-0 mb-0">
-        <li class="mt-0.5 w-full">
-          <a
-            class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg bg-white px-4 font-semibold text-slate-700 transition-colors"
-            href="">
-            <div
-              class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
-              <i class="ni leading-none ni-single-02 text-lg relative top-3.5 text-white"></i>
-            </div>
-            <span
-              class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Users</span>
-          </a>
-        </li>
-        <br>
-        <br>
-        <li class="mt-0.5 w-full">
-          <a
-            class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg bg-white px-4 font-semibold text-slate-700 transition-colors"
-            href="">
-            <div
-              class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
-              <i class="ni leading-none ni-single-02 text-lg relative top-3.5 text-white"></i>
-            </div>
-            <span
-              class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Eventes</span>
-          </a>
-        </li>
-        <br>
-        <br>
-        <li class="mt-0.5 w-full">
-          <a
-            class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg bg-white px-4 font-semibold text-slate-700 transition-colors"
-            href="">
-            <div
-              class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
-              <i class="ni leading-none ni-single-02 text-lg relative top-3.5 text-white"></i>
-            </div>
-            <span
-              class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Our Shop</span>
-          </a>
-        </li>
-        <br>
-        <br>
-        <li class="mt-0.5 w-full">
-          <a
-            class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg bg-white px-4 font-semibold text-slate-700 transition-colors"
-            href="">
-            <div
-              class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
-              <i class="ni leading-none ni-single-02 text-lg relative top-3.5 text-white"></i>
-            </div>
-            <span
-              class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">Donation</span>
-          </a>
-        </li>
-        <br>
-        <br>
-      </ul>
-    </div>
-  </aside>
 
-  <!-- end sidenav -->
+
+
+
+
+
+
+
 
   <main
     class="ease-soft-in-out xl:ml-68.5 relative h-full max-h-screen rounded-xl transition-all duration-200">
     <!-- Navbar -->
-    <nav
-      class="relative flex flex-wrap items-center justify-between px-0 py-2 mx-6 transition-all shadow-none duration-250 ease-soft-in rounded-2xl lg:flex-nowrap lg:justify-start"
-      navbar-main
-      navbar-scroll="true">
-      <div
-        class="flex items-center justify-between w-full px-4 py-1 mx-auto flex-wrap-inherit">
-        <nav>
-          <!-- breadcrumb -->
-          <ol
-            class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
-            <li class="text-sm leading-normal">
-              <a class="opacity-50 text-slate-700" href="javascript:;">Pages</a>
-            </li>
-            <li
-              class="text-sm pl-2 capitalize leading-normal text-slate-700 before:float-left before:pr-2 before:text-gray-600 before:content-['/']"
-              aria-current="page">
-              Users
-            </li>
+    
 
-          </ol>
-          <h6 class="mb-0 font-bold capitalize">Users Management</h6>
-        </nav>
 
-        <div
-          class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
-          <div class="flex items-center md:ml-auto md:pr-4">
-            <div
-              class="relative flex flex-wrap items-stretch w-full transition-all rounded-lg ease-soft">
-              <span
-                class="text-sm ease-soft leading-5.6 absolute z-50 -ml-px flex h-full items-center whitespace-nowrap rounded-lg rounded-tr-none rounded-br-none border border-r-0 border-transparent bg-transparent py-2 px-2.5 text-center font-normal text-slate-500 transition-all">
-                <i class="fas fa-search"></i>
-              </span>
-              <input
-                type="text"
-                class="pl-8.75 text-sm focus:shadow-soft-primary-outline ease-soft w-1/100 leading-5.6 relative -ml-px block min-w-0 flex-auto rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 pr-3 text-gray-700 transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none focus:transition-shadow"
-                placeholder="Search users..." />
+
+
+
+<!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <div class="stat-content">
+                    
+                    <p>Total des dons</p>
+                </div>
             </div>
-          </div>
 
-          <ul
-            class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
-            <li class="flex items-center">
-              <a
-                href="/projet_web/app/views/FrontOffice/public/index.php"
-                class="block px-0 py-2 text-sm font-semibold transition-all ease-nav-brand text-slate-500">
-                <i class="fa fa-user sm:mr-1"></i>
-                <span class="hidden sm:inline">frontwebsite</span>
-              </a>
-            </li>
-          </ul>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-content">
+                    
+                    <p>Montant collecté</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                   
+                    <p>Dons validés</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    
+                    <p>En attente</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- Messages de notification -->
     <?php if (isset($success_message)): ?>
@@ -266,28 +341,95 @@
     <!-- Main Content Area -->
     <div class="w-full px-6 py-6 mx-auto">
       <!-- Users Table -->
-      <div class="flex flex-wrap -mx-3">
-        <div class="w-full max-w-full px-3 flex-0">
-          <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-            <div class="p-6 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-              <h6 class="mb-1">Users List</h6>
-              <p class="leading-normal text-sm">Manage all registered users in the system</p>
-            </div>
-            <div class="flex-auto p-6">
-              <div class="overflow-x-auto">
-                <table class="table-auto w-full text-slate-500">
-                  <thead>
-                    <tr class="bg-gray-50">
-                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">ID</th>
-                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Role</th>
 
-                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Name</th>
-                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Email</th>
-                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Address</th>
-                      <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Created At</th>
-                      <th class="px-6 py-3 text-center text-xs font-bold uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
+
+
+
+        <div class="chart-card" style="margin-top: 25px;">
+            <div class="chart-header">
+              <h2 class="mb-1">Users List</h2>
+                <h2>Manage all registered users in the system</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Role</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                   <tbody class="divide-y divide-gray-100">
                     <?php if (!empty($users)): ?>
                       <?php foreach ($users as $user): ?>
@@ -301,7 +443,7 @@
                           <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                               <div class="flex-shrink-0 h-10 w-10">
-                                <div class="h-10 w-10 rounded-full bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-tl from-green-600 to-emerald-400 flex items-center justify-center text-white font-bold text-sm">
                                   <?php echo strtoupper(substr($user['name'] ?? 'U', 0, 1)); ?>
                                 </div>
                               </div>
