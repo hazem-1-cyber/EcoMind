@@ -22,12 +22,37 @@ try {
         $sql = "SELECT *, (SELECT COUNT(*) FROM inscription WHERE evenement_id = evenement.id) as nb_inscriptions 
                 FROM evenement";
         $params = [];
+        $conditions = [];
         
-        // Add WHERE clause if keyword exists
+        // Add keyword search condition
         if (!empty($keyword) && trim($keyword) !== '') {
             $searchTerm = '%' . trim($keyword) . '%';
-            $sql .= " WHERE LOWER(titre) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?) OR LOWER(type) LIKE LOWER(?)";
-            $params = [$searchTerm, $searchTerm, $searchTerm];
+            $conditions[] = "(LOWER(titre) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?) OR LOWER(type) LIKE LOWER(?))";
+            $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+        }
+        
+        // Add type filter
+        $type = $_GET['type'] ?? '';
+        if (!empty($type) && $type !== '') {
+            $conditions[] = "type = ?";
+            $params[] = $type;
+        }
+        
+        // Add date filters
+        $date_from = $_GET['date_from'] ?? '';
+        $date_to = $_GET['date_to'] ?? '';
+        if (!empty($date_from) && $date_from !== '') {
+            $conditions[] = "DATE(date_creation) >= ?";
+            $params[] = $date_from;
+        }
+        if (!empty($date_to) && $date_to !== '') {
+            $conditions[] = "DATE(date_creation) <= ?";
+            $params[] = $date_to;
+        }
+        
+        // Add WHERE clause if conditions exist
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
         }
         
         // Add ORDER BY clause based on sort parameter
@@ -72,11 +97,13 @@ try {
             'sort' => $sort,
             'debug' => [
                 'keyword_received' => $keyword,
-                'keyword_trimmed' => trim($keyword),
-                'keyword_empty' => empty($keyword),
-                'sort_received' => $sort,
-                'sql_used' => !empty($keyword) ? 'with_keyword' : 'all_events',
-                'params_count' => count($params)
+                'type_received' => $type,
+                'date_from_received' => $date_from,
+                'date_to_received' => $date_to,
+                'conditions_count' => count($conditions),
+                'params_count' => count($params),
+                'sql_final' => $sql,
+                'params_used' => $params
             ]
         ]);
         

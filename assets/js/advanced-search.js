@@ -426,9 +426,19 @@ class AdvancedSearch {
         
         // Type-specific filters
         if (this.config.type === 'events') {
-            filters.type = document.getElementById('typeFilter')?.value || '';
-            filters.date_from = document.getElementById('dateFromFilter')?.value || '';
-            filters.date_to = document.getElementById('dateToFilter')?.value || '';
+            const typeFilter = document.getElementById('typeFilter');
+            const dateFromFilter = document.getElementById('dateFromFilter');
+            const dateToFilter = document.getElementById('dateToFilter');
+            
+            filters.type = typeFilter ? typeFilter.value : '';
+            filters.date_from = dateFromFilter ? dateFromFilter.value : '';
+            filters.date_to = dateToFilter ? dateToFilter.value : '';
+            
+            console.log('📋 Event filters collected:', {
+                type: filters.type,
+                date_from: filters.date_from,
+                date_to: filters.date_to
+            });
         } else if (this.config.type === 'inscriptions') {
             filters.evenement_id = document.getElementById('eventFilter')?.value || '';
             filters.age_min = document.getElementById('ageMinFilter')?.value || '';
