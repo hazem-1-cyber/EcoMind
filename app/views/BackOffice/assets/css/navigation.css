@@ -1,0 +1,148 @@
+/* Styles pour les boutons de navigation */
+
+/* Container des boutons dans le header */
+.header-navigation {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* Bouton Faire un don dans le header */
+.donation-header-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 15px !important;
+    background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 25px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3) !important;
+    border: none !important;
+}
+
+.donation-header-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4) !important;
+    color: white !important;
+}
+
+.donation-header-btn i {
+    font-size: 16px !important;
+    color: white !important;
+}
+
+/* Bouton Front Office dans le header */
+.front-office-header-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 15px !important;
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 25px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3) !important;
+    border: none !important;
+}
+
+.front-office-header-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4) !important;
+    color: white !important;
+}
+
+.front-office-header-btn i {
+    font-size: 16px !important;
+    color: white !important;
+}
+
+/* Boutons dans la sidebar */
+
+/* Bouton Faire un don dans la sidebar */
+.donation-sidebar-btn {
+    background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+    border-left: 4px solid #f7931e !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin-bottom: 8px !important;
+}
+
+.donation-sidebar-btn:hover {
+    background: linear-gradient(135deg, #f7931e, #ff6b35) !important;
+}
+
+.donation-sidebar-btn span {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.donation-sidebar-btn i {
+    color: white !important;
+}
+
+/* Bouton Front Office dans la sidebar */
+.front-office-sidebar-btn {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border-left: 4px solid #20c997 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.front-office-sidebar-btn:hover {
+    background: linear-gradient(135deg, #20c997, #28a745) !important;
+}
+
+.front-office-sidebar-btn span {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.front-office-sidebar-btn i {
+    color: white !important;
+}
+
+.front-office-sidebar-btn .external-icon {
+    position: absolute !important;
+    right: 15px !important;
+    color: rgba(255,255,255,0.8) !important;
+    font-size: 12px !important;
+}
+
+/* Animation de pulsation */
+@keyframes frontOfficePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+.front-office-pulse {
+    animation: frontOfficePulse 2s infinite;
+}
+
+/* Séparateur dans la sidebar */
+.front-office-separator {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin: 15px 0 !important;
+    padding-top: 15px !important;
+}
+
+/* Assurer la visibilité */
+.header-icon a,
+.nav-item {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}

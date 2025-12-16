@@ -39,6 +39,7 @@ class FrontOfficeController {
            
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_role'] = $user['role']; // Ajouter le rôle dans la session
             return true;
         }
         return false;

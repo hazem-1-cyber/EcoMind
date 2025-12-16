@@ -23,6 +23,39 @@
     <link
       href="./assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5"
       rel="stylesheet" />
+    <style>
+      /* Styles pour la sidebar */
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-left-color: #88b04b !important;
+      }
+      
+      /* Style pour les champs de formulaire */
+      .form-input {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+      }
+      
+      .form-input:focus {
+        border-color: #2c5f2d;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+      }
+      
+      /* Style pour les labels */
+      .form-label {
+        color: #2c5f2d;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    </style>
   </head>
 
   <body
@@ -74,56 +107,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     
-    <!-- sidenav  -->
-    <aside
-      class="max-w-62.5 ease-nav-brand z-990 fixed inset-y-0 my-4 ml-4 block w-full -translate-x-full flex-wrap items-center justify-between overflow-y-auto rounded-2xl border-0 bg-white p-0 antialiased shadow-none transition-transform duration-200 xl:left-0 xl:translate-x-0 xl:bg-transparent">
-      <div class="h-19.5">
-        <i
-          class="absolute top-0 right-0 hidden p-4 opacity-50 cursor-pointer fas fa-times text-slate-400 xl:hidden"
-          sidenav-close></i>
-        <a
-          class="block px-8 py-6 m-0 text-sm whitespace-nowrap text-slate-700"
-          href="javascript:;"
-          target="_blank">
-          <img
-            src="./assets/img/logo-ct.png"
-            class="inline h-full max-w-full transition-all duration-200 ease-nav-brand max-h-8"
-            alt="main_logo" />
-          <span
-            class="ml-1 font-semibold transition-all duration-200 ease-nav-brand"
-            >Soft UI Dashboard</span
-          >
-        </a>
-      </div>
-
-      <hr
-        class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
-
-      <div
-        class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
-        <ul class="flex flex-col pl-0 mb-0">
-          <li class="mt-0.5 w-full">
-            <a
-              class="py-2.7 shadow-soft-xl text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg bg-white px-4 font-semibold text-slate-700 transition-colors"
-              href="">
-              <div
-                class="bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
-                <i class="ni leading-none ni-single-02 text-lg relative top-3.5 text-white"></i>
-              </div>
-              <span
-                class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft"
-                >Users</span
-              >
+    <!-- Sidebar avec le style du back office -->
+    <aside class="sidebar" id="sidebar" style="position: fixed; width: 250px; height: 100vh; background: linear-gradient(135deg, #2c5f2d, #1a3a1b); color: white; overflow-y: auto;">
+        <div class="sidebar-header" style="padding: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+                <div class="logo-icon">
+                    <img src="images/logo-ecomind.png" alt="EcoMind Logo" style="width: 50px; height: 50px; object-fit: contain;">
+                </div>
+                <div class="logo-text" style="font-size: 20px; font-weight: bold;">EcoMind</div>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav" style="padding: 20px 0;">
+            <!-- Dashboard avec statistiques users -->
+            <a href="index.php" class="nav-item active" style="display: flex; align-items: center; gap: 12px; padding: 15px 20px; color: white; text-decoration: none; background: rgba(255, 255, 255, 0.1); border-left: 3px solid #88b04b;">
+                <i class="fas fa-chart-line" style="width: 20px; text-align: center;"></i>
+                <span>Dashboard</span>
             </a>
-          </li>
-        </ul>
-      </div>
+            
+            <!-- Event - Travail du camarade (vide pour l'instant) -->
+            <a href="#" class="nav-item" onclick="alert('Section Event - Travail en cours par votre camarade')" style="display: flex; align-items: center; gap: 12px; padding: 15px 20px; color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: all 0.3s ease; border-left: 3px solid transparent;">
+                <i class="fas fa-calendar-alt" style="width: 20px; text-align: center;"></i>
+                <span>Event</span>
+            </a>
+            
+            <!-- Shop - Travail du camarade (vide pour l'instant) -->
+            <a href="#" class="nav-item" onclick="alert('Section Shop - Travail en cours par votre camarade')" style="display: flex; align-items: center; gap: 12px; padding: 15px 20px; color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: all 0.3s ease; border-left: 3px solid transparent;">
+                <i class="fas fa-shopping-cart" style="width: 20px; text-align: center;"></i>
+                <span>Shop</span>
+            </a>
+            
+            <!-- Don - Travail du camarade (vide pour l'instant) -->
+            <a href="#" class="nav-item" onclick="alert('Section Don - Travail en cours par votre camarade')" style="display: flex; align-items: center; gap: 12px; padding: 15px 20px; color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: all 0.3s ease; border-left: 3px solid transparent;">
+                <i class="fas fa-heart" style="width: 20px; text-align: center;"></i>
+                <span>Don</span>
+            </a>
+            
+            <!-- Déconnexion -->
+            <a href="logout.php" class="nav-item" style="display: flex; align-items: center; gap: 12px; padding: 15px 20px; color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: all 0.3s ease; border-left: 3px solid transparent;">
+                <i class="fas fa-sign-out-alt" style="width: 20px; text-align: center;"></i>
+                <span>Déconnexion</span>
+            </a>
+        </nav>
     </aside>
 
     <!-- end sidenav -->
 
     <main
-      class="ease-soft-in-out xl:ml-68.5 relative h-full max-h-screen rounded-xl transition-all duration-200">
+      class="ease-soft-in-out relative h-full max-h-screen rounded-xl transition-all duration-200" style="margin-left: 250px;">
       <!-- Navbar -->
       <nav
         class="relative flex flex-wrap items-center justify-between px-0 py-2 mx-6 transition-all shadow-none duration-250 ease-soft-in rounded-2xl lg:flex-nowrap lg:justify-start"
@@ -203,35 +234,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <!-- Name Field -->
                   <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                      <i class="fas fa-user text-blue-500 mr-2"></i>
+                    <label for="name" class="form-label">
+                      <i class="fas fa-user"></i>
                       Full Name
                     </label>
                     <input type="text" name="name" id="name" required
                            value="<?php echo htmlspecialchars($user['name']); ?>"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                           class="w-full form-input">
                   </div>
                   
                   <!-- Email Field -->
                   <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                      <i class="fas fa-envelope text-green-500 mr-2"></i>
+                    <label for="email" class="form-label">
+                      <i class="fas fa-envelope"></i>
                       Email Address
                     </label>
                     <input type="email" name="email" id="email" required
                            value="<?php echo htmlspecialchars($user['email']); ?>"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                           class="w-full form-input">
                   </div>
                 </div>
                 
                 <!-- Address Field -->
                 <div>
-                  <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="fas fa-map-marker-alt text-orange-500 mr-2"></i>
+                  <label for="address" class="form-label">
+                    <i class="fas fa-map-marker-alt"></i>
                     Address
                   </label>
                   <textarea name="address" id="address" rows="3"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"><?php echo htmlspecialchars($user['address']); ?></textarea>
+                            class="w-full form-input"><?php echo htmlspecialchars($user['address']); ?></textarea>
                 </div>
                 
                 <!-- User Info -->
@@ -262,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Back to Users
                   </a>
                   <button type="submit"
-                         class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-black rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center">
+                         class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center">
                     <i class="fas fa-save mr-2"></i>
                     Update User
                   </button>

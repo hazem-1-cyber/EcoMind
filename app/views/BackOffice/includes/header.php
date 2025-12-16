@@ -1,3 +1,10 @@
+<?php
+// S'assurer que la session est démarrée
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+
 <!-- Top Header -->
 <header class="top-header">
     <div class="header-left">
@@ -21,6 +28,30 @@
             }
         }
         ?>
+        
+        <!-- Boutons de navigation -->
+        <div class="header-navigation" style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
+            <!-- Bouton Faire un don -->
+            <a href="dons.php" 
+               style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; background: linear-gradient(135deg, #ff6b35, #f7931e); color: white; text-decoration: none; border-radius: 25px; font-size: 14px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);"
+               title="Faire un don"
+               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(255, 107, 53, 0.4)'"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(255, 107, 53, 0.3)'">
+                <i class="fas fa-heart" style="font-size: 16px;"></i>
+                <span>Faire un Don</span>
+            </a>
+            
+            <!-- Bouton Voir le Site -->
+            <a href="../../../app/views/FrontOffice/index.php" 
+               style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; background: linear-gradient(135deg, #28a745, #20c997); color: white; text-decoration: none; border-radius: 25px; font-size: 14px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);"
+               title="Aller au Front Office"
+               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(40, 167, 69, 0.4)'"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(40, 167, 69, 0.3)'">
+                <i class="fas fa-globe" style="font-size: 16px;"></i>
+                <span>Voir le Site</span>
+            </a>
+        </div>
+        
         <div class="header-icon notification-icon" id="notificationBtn" style="position: relative; cursor: pointer;" title="Dons en attente">
             <i class="fas fa-bell"></i>
             <?php if ($donsPending > 0): ?>
@@ -68,6 +99,9 @@
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Inclusion du CSS pour la navigation -->
+<link rel="stylesheet" href="assets/css/navigation.css">
 
 <style>
 @keyframes slideDown {

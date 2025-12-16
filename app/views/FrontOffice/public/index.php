@@ -32,6 +32,14 @@
                     href="">Contact us</a></li>
                 <li class="mr-4 lg:mr-8"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium"
                     href="">Blog</a></li>
+                
+                <!-- Bouton Faire un don dans la navigation -->
+                <li class="mr-4 lg:mr-8">
+                    <a class="inline-block text-teal-900 hover:text-teal-700 font-medium" 
+                       href="donation.php">
+                        Faire un Don
+                    </a>
+                </li>
 
                 <?php session_start(); ?>
                 
@@ -74,9 +82,7 @@
                       href="login.php">Login</a>
                       <?php endif; ?>
                       
-                      <a
-                      class="inline-flex py-2.5 px-4 items-center justify-center text-sm font-medium text-white border border-teal-900 hover:border-black bg-teal-900 hover:bg-black rounded-full transition duration-200"
-                      href="contact.html">Get in touch</a></div>
+</div>
                 </div>
                 <button class="md:hidden text-teal-900 hover:text-teal-800" x-on:click="mobileNavOpen = !mobileNavOpen">
                   <svg width="32" height="32" viewbox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,7 +123,13 @@
                     href="">Pricing</a></li>
                 <li class="mb-6"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="">Contact
                     us</a></li>
-                <li><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="">Blog</a></li>
+                <li class="mb-6"><a class="inline-block text-teal-900 hover:text-teal-700 font-medium" href="">Blog</a></li>
+                <li class="mb-6">
+                    <a class="inline-block text-teal-900 hover:text-teal-700 font-medium" 
+                       href="donation.php">
+                        Faire un Don
+                    </a>
+                </li>
               </ul>
             </div>
             <div class="flex items-center justify-between"><a
@@ -178,6 +190,7 @@
         </section>
       </div>
     </div>
+
     <section class="relative py-12 lg:py-24 bg-orange-50 overflow-hidden"><img class="absolute bottom-0 left-0"
         src="fauna-assets/footer/waves-lines-left-bottom.png" alt="" />
       <div class="container px-4 mx-auto relative">
@@ -263,6 +276,9 @@
       </div>
     </section>
   </div>
+
+
+
 </body>
 
 </html>

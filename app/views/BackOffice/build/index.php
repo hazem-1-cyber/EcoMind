@@ -34,6 +34,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Styles personnalisés pour les boutons d'action -->
+    <style>
+        /* Styles pour les boutons d'action */
+        .action-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            padding: 8px 12px !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            margin: 0 2px !important;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+            color: white !important;
+        }
+        
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+            color: white !important;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            color: white !important;
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+            color: white !important;
+        }
+        
+        .btn-ban {
+            background: linear-gradient(135deg, #f97316, #ea580c) !important;
+            color: white !important;
+        }
+        
+        .btn-ban:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c) !important;
+            color: white !important;
+        }
+        
+        .btn-approve {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            color: white !important;
+        }
+        
+        .btn-approve:hover {
+            background: linear-gradient(135deg, #059669, #047857) !important;
+            color: white !important;
+        }
+        
+        /* Assurer que les icônes sont visibles */
+        .action-btn i {
+            margin-right: 4px !important;
+            font-size: 11px !important;
+        }
+        
+        /* Container des boutons */
+        .actions-container {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 4px !important;
+            flex-wrap: wrap !important;
+        }
+    </style>
 </head>
 
 <style>
@@ -200,39 +277,32 @@
         </div>
         
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item active">
+            <!-- Dashboard avec statistiques users -->
+            <a href="index.php" class="nav-item active">
                 <i class="fas fa-chart-line"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="dons.php" class="nav-item">
-                <i class="fas fa-hand-holding-heart"></i>
-                <span>Tous les dons</span>
+            
+            <!-- Event - Travail du camarade (vide pour l'instant) -->
+            <a href="#" class="nav-item" onclick="alert('Section Event - Travail en cours par votre camarade')">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Event</span>
             </a>
-            <a href="lisdon.php" class="nav-item">
-                <i class="fas fa-list"></i>
-                <span>Gestion des dons</span>
+            
+            <!-- Shop - Travail du camarade (vide pour l'instant) -->
+            <a href="#" class="nav-item" onclick="alert('Section Shop - Travail en cours par votre camarade')">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Shop</span>
             </a>
-            <a href="corbeille.php" class="nav-item">
-                <i class="fas fa-trash-alt"></i>
-                <span>Corbeille</span>
+            
+            <!-- Don - Travail du camarade (vide pour l'instant) -->
+            <a href="#" class="nav-item" onclick="alert('Section Don - Travail en cours par votre camarade')">
+                <i class="fas fa-heart"></i>
+                <span>Don</span>
             </a>
-            <a href="listcategorie.php" class="nav-item">
-                <i class="fas fa-tags"></i>
-                <span>Catégories</span>
-            </a>
-            <a href="associations.php" class="nav-item">
-                <i class="fas fa-building"></i>
-                <span>Associations</span>
-            </a>
-            <a href="statistiques.php" class="nav-item">
-                <i class="fas fa-chart-pie"></i>
-                <span>Statistiques</span>
-            </a>
-            <a href="parametres.php" class="nav-item">
-                <i class="fas fa-cog"></i>
-                <span>Paramètres</span>
-            </a>
-            <a href="#" class="nav-item">
+            
+            <!-- Déconnexion -->
+            <a href="logout.php" class="nav-item">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Déconnexion</span>
             </a>
@@ -258,46 +328,26 @@
 
 
 
-<!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-hand-holding-heart"></i>
+<!-- Bouton Retour Front -->
+        <div class="front-return-section" style="display: flex; justify-content: center; align-items: center; padding: 40px 20px; background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            <div class="text-center">
+                <div class="mb-4">
+                    <i class="fas fa-globe" style="font-size: 48px; color: #2c5f2d; margin-bottom: 15px;"></i>
                 </div>
-                <div class="stat-content">
-                    
-                    <p>Total des dons</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-coins"></i>
-                </div>
-                <div class="stat-content">
-                    
-                    <p>Montant collecté</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-content">
-                   
-                    <p>Dons validés</p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-content">
-                    
-                    <p>En attente</p>
-                </div>
+                <h3 style="color: #2c5f2d; font-size: 24px; font-weight: bold; margin-bottom: 10px;">
+                    Retourner au Site Web
+                </h3>
+                <p style="color: #64748b; margin-bottom: 25px; font-size: 16px;">
+                    Accédez au front office pour voir le site public
+                </p>
+                <a href="http://localhost/projet_web/app/views/FrontOffice/public/index.php" 
+                   class="front-return-btn"
+                   style="display: inline-flex; align-items: center; gap: 12px; padding: 15px 30px; background: linear-gradient(135deg, #2c5f2d, #88b04b); color: white; text-decoration: none; border-radius: 50px; font-size: 16px; font-weight: 600; box-shadow: 0 6px 20px rgba(44, 95, 45, 0.3); transition: all 0.3s ease; transform: translateY(0);"
+                   onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(44, 95, 45, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(44, 95, 45, 0.3)'">
+                    <i class="fas fa-external-link-alt" style="font-size: 18px;"></i>
+                    <span>Retour Front</span>
+                </a>
             </div>
         </div>
 
@@ -471,32 +521,37 @@
                             ?>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                            <div class="flex justify-center space-x-2">
-                              <!-- Edit Button - Blue -->
-                              <a href="edit_user.php?id=<?php echo $user['id']; ?>"
-                                class="text-blue-500 hover:text-blue-700 font-semibold">
+                            <div class="actions-container">
+                              <!-- Edit Button -->
+                              <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="action-btn btn-edit">
+                                <i class="fas fa-edit"></i>
                                 Edit
                               </a>
-                              <!-- Delete Button - Red -->
+                              
+                              <!-- Delete Button -->
                               <a href="delete_user.php?id=<?php echo $user['id']; ?>"
                                 onclick="return confirm('Are you sure you want to delete this user?')"
-                                class="text-red-500 hover:text-red-700">
+                                class="action-btn btn-delete">
+                                <i class="fas fa-trash"></i>
                                 Delete
                               </a>
 
+                              <!-- Ban Button -->
                               <a href="ban_user.php?id=<?php echo $user['id']; ?>"
                                 onclick="return confirm('Are you sure you want to ban this user?')"
-                                class="text-yellow-600 hover:text-yellow-800 font-semibold">
+                                class="action-btn btn-ban">
+                                <i class="fas fa-ban"></i>
                                 Ban
                               </a>
 
-                              <!-- Nouveau bouton : visible seulement si rôle = user et patente_image != null -->
-        <?php if ($user['role'] === 'user' && !empty($user['patente_image'])): ?>
-            <a href="approve_association.php?id=<?php echo $user['id']; ?>"
-               class="text-green-600 hover:text-green-800 font-semibold">
-                Approve Association
-            </a>
-        <?php endif; ?>
+                              <!-- Approve Association Button -->
+                              <?php if ($user['role'] === 'user' && !empty($user['patente_image'])): ?>
+                              <a href="approve_association.php?id=<?php echo $user['id']; ?>"
+                                class="action-btn btn-approve">
+                                <i class="fas fa-check"></i>
+                                Approve
+                              </a>
+                              <?php endif; ?>
                             </div>
                           </td>
                         </tr>
