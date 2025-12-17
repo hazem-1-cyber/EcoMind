@@ -323,7 +323,7 @@ $pourcentageRejected = $totalDons > 0 ? round(($donsRejected / $totalDons) * 100
             <div style="padding: 25px;">
                 <?php
                 // Objectif mensuel (peut être configuré dans settings.json)
-                require_once __DIR__ . "/../../model/config/SettingsManager.php";
+                require_once __DIR__ . "/../../controller/config/SettingsManager.php";
                 $settingsManager = new SettingsManager();
                 $objectifMensuel = $settingsManager->get('objectif_mensuel', 10000);
                 $pourcentageObjectif = min(100, round(($totalCollecteMoisCourant / $objectifMensuel) * 100));

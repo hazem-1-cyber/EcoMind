@@ -3,8 +3,8 @@ session_start();
 require_once __DIR__ . "/../../controller/DonController.php";
 require_once __DIR__ . "/../../model/DonModel.php";
 require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../model/vendor/autoload.php';
-require_once __DIR__ . '/../../model/config/SettingsManager.php';
+require_once __DIR__ . '/../../controller/vendor/autoload.php';
+require_once __DIR__ . '/../../controller/config/SettingsManager.php';
 
 $settingsManager = new SettingsManager();
 
@@ -81,33 +81,62 @@ try {
     $lastDonId = $db->lastInsertId();
     
     // Envoyer les emails si les notifications sont activées
-    if ($settingsManager->get('email_notifications', true)) {
-        require_once __DIR__ . '/../../model/helpers/EmailHelper.php';
-        require_once __DIR__ . '/../../model/helpers/ReceiptHelper.php';
+    $emailNotificationsEnabled = $settingsManager->get('email_notifications', true);
+    error_log("Email notifications enabled: " . ($emailNotificationsEnabled ? 'true' : 'false'));
+    
+    if ($emailNotificationsEnabled) {
+        require_once __DIR__ . '/../../controller/helpers/EmailHelper.php';
+        require_once __DIR__ . '/../../controller/helpers/ReceiptHelper.php';
         
         // Récupérer les données complètes du don
         $donComplet = $donCtrl->getDon($lastDonId);
+        error_log("Don récupéré pour email - ID: $lastDonId, Email: " . ($donComplet ? $donComplet['email'] : 'null'));
         
         if ($donComplet) {
             // 1. Email de remerciement au donneur avec reçu
             try {
+                error_log("Tentative génération reçu PDF pour don ID: $lastDonId");
+                
                 // Générer le reçu PDF
                 $receipt = ReceiptHelper::generateReceipt($donComplet);
+                error_log("Reçu PDF généré: " . $receipt['filepath']);
                 
                 // Envoyer l'email de remerciement avec le reçu en pièce jointe
-                EmailHelper::sendThankYouEmail($donComplet, $receipt['filepath']);
+                error_log("Tentative envoi email remerciement à: " . $donComplet['email']);
+                $emailResult = EmailHelper::sendThankYouEmail($donComplet, $receipt['filepath']);
+                
+                if ($emailResult) {
+                    error_log("✅ Email de remerciement envoyé avec succès à: " . $donComplet['email']);
+                } else {
+                    error_log("❌ Échec envoi email de remerciement à: " . $donComplet['email']);
+                }
+                
             } catch (Exception $e) {
-                error_log("Erreur envoi email donneur: " . $e->getMessage());
+                error_log("❌ Erreur envoi email donneur: " . $e->getMessage());
+                error_log("Stack trace: " . $e->getTraceAsString());
             }
             
             // 2. Email de notification à l'admin EcoMind
             try {
                 $adminEmail = $settingsManager->get('admin_email', 'contact@ecomind.tn');
-                EmailHelper::sendAdminNotification($donComplet, $adminEmail);
+                error_log("Tentative envoi notification admin à: $adminEmail");
+                
+                $adminResult = EmailHelper::sendAdminNotification($donComplet, $adminEmail);
+                
+                if ($adminResult) {
+                    error_log("✅ Email admin envoyé avec succès à: $adminEmail");
+                } else {
+                    error_log("❌ Échec envoi email admin à: $adminEmail");
+                }
+                
             } catch (Exception $e) {
-                error_log("Erreur envoi email admin: " . $e->getMessage());
+                error_log("❌ Erreur envoi email admin: " . $e->getMessage());
             }
+        } else {
+            error_log("❌ Impossible de récupérer les données du don ID: $lastDonId");
         }
+    } else {
+        error_log("📧 Notifications email désactivées dans les paramètres");
     }
 
     // Conserver l'association_id pour la page merci avant de nettoyer

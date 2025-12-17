@@ -1,7 +1,7 @@
 ﻿<?php
 // Charger les associations statiques depuis la base de données
 require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../model/config/SettingsManager.php';
+require_once __DIR__ . '/../../controller/config/SettingsManager.php';
 
 $db = Config::getConnexion();
 $settingsManager = new SettingsManager();

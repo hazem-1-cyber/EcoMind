@@ -1,9 +1,0 @@
-{
-    "notifications_enabled": true,
-    "email_notifications": true,
-    "auto_validate_money": true,
-    "min_donation_amount": 25,
-    "currency": "TND",
-    "objectif_mensuel": 1100,
-    "admin_email": "contact@ecomind.tn"
-}

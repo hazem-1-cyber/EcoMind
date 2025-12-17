@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 session_start();
 
 try {
-    require_once __DIR__ . '/../../model/config/SettingsManager.php';
+    require_once __DIR__ . '/../../controller/config/SettingsManager.php';
     require_once __DIR__ . '/../../config.php';
     $settingsManager = new SettingsManager();
 } catch (Exception $e) {

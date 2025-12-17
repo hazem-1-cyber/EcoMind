@@ -7,7 +7,7 @@ session_start();
 require_once __DIR__ . "/../../config.php";
 require_once __DIR__ . "/../../model/DonModel.php";
 require_once __DIR__ . "/../../controller/DonController.php";
-require_once __DIR__ . "/../../model/config/SettingsManager.php";
+require_once __DIR__ . "/../../controller/config/SettingsManager.php";
 
 $settingsManager = new SettingsManager();
 

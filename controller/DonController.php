@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../config.php');
 include_once(__DIR__ . '/../model/DonModel.php');
-require_once(__DIR__ . '/../model/helpers/EmailHelper.php');
-require_once(__DIR__ . '/../model/helpers/ReceiptHelper.php');
-require_once(__DIR__ . '/../model/config/SettingsManager.php');
+require_once(__DIR__ . '/helpers/EmailHelper.php');
+require_once(__DIR__ . '/helpers/ReceiptHelper.php');
+require_once(__DIR__ . '/config/SettingsManager.php');
 
 class DonController {
     public function showDon(Don $don) {
