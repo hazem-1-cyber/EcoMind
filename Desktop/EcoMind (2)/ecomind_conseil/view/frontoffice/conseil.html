@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conseils Écologiques</title>
+    <link rel="stylesheet" href="conseil.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌱 Conseils pour la Planète</h1>
+            <img src="../../assets/images/Screenshot_2025-11-16_152042-removebg-preview.png" alt="Logo Eco Mind" class="logo-eco">
+            <p class="subtitle">Adoptez des gestes simples pour préserver notre environnement</p>
+        </header>
+        <form action="../controller/traitement_formulaire.php" method="post" id="form-eco"></form>
+
+        <div class="progress-section">
+            <h2>Votre Progrès Écologique</h2>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar">
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+            <p class="progress-info">Continuez vos efforts pour atteindre 100% !</p>
+        </div>
+
+        <div class="tips-section">
+            <h2>Conseils Écologiques</h2>
+            
+            <div class="tip-card">
+                <div class="tip-icon">🚲</div>
+                <h3>Privilégiez les transports doux</h3>
+                <p>Utilisez le vélo, la marche ou les transports en commun pour vos déplacements quotidiens. Cela réduit significativement votre empreinte carbone et améliore votre santé.</p>
+                <button class="tip-button" onclick="updateProgress(33)">J'ai appliqué ce conseil</button>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">♻️</div>
+                <h3>Réduisez, Réutilisez, Recyclez</h3>
+                <p>Adoptez la règle des 3R : réduisez vos déchets, réutilisez ce qui peut l'être, et recyclez correctement. Évitez les produits à usage unique et privilégiez les objets durables.</p>
+                <button class="tip-button" onclick="updateProgress(33)">J'ai appliqué ce conseil</button>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-icon">💡</div>
+                <h3>Économisez l'énergie</h3>
+                <p>Éteignez les lumières et appareils électroniques quand vous ne les utilisez pas. Remplacez les ampoules par des LED et utilisez des multiprises avec interrupteur pour éviter la consommation fantôme.</p>
+                <button class="tip-button" onclick="updateProgress(34)">J'ai appliqué ce conseil</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Chaque petit geste compte pour notre planète 🌍</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9abf0c563f585bc9',t:'MTc2NTM5Mzg4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

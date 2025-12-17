@@ -1,7 +1,8 @@
 # Fichiers de configuration sensibles
 .env
 .env.local
-config/email_config_local.php
+config.php
+controller/config/email_config_local.php
 
 # Uploads (fichiers utilisateur)
 view/FrontOffice/images/uploads/dons/*.png
@@ -10,6 +11,7 @@ view/FrontOffice/images/uploads/dons/*.jpeg
 view/FrontOffice/images/uploads/dons/*.gif
 view/FrontOffice/images/uploads/dons/*.webp
 view/FrontOffice/images/uploads/receipts/*.pdf
+uploads/
 
 # Mais garder les dossiers et .htaccess
 !view/FrontOffice/images/uploads/dons/.htaccess
@@ -19,11 +21,14 @@ view/FrontOffice/images/uploads/receipts/*.pdf
 
 # Dépendances
 model/vendor/
+controller/vendor/
 
 # Fichiers de développement et test
 test_*.php
 debug_*.php
 audit_*.php
+setup.php
+fix_image_paths.php
 *.tmp
 *.log
 
@@ -35,7 +40,7 @@ Thumbs.db
 *~
 
 # IDE
-.vscode/settings.json
+.vscode/
 .idea/
 *.sublime-*
 
