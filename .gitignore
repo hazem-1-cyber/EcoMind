@@ -1,0 +1,20 @@
+# Ignore config files with sensitive data
+config.php
+
+# Ignore setup and fix scripts
+setup.php
+fix_image_paths.php
+
+# Ignore uploaded files
+uploads/
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+*.log
