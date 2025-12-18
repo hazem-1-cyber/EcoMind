@@ -2,7 +2,7 @@
 
 ## Description du Projet
 
-**EcoMind** est une plateforme web modulaire dédiée à la promotion de l'écologie et du développement durable. Ce projet PHP/MySQL offre une solution complète pour gérer plusieurs aspects d'une organisation écologique :
+**EcoMind** est une plateforme web modulaire dédiée à la promotion de l'écologie et du développement durable. Ce projet  offre une solution complète pour gérer plusieurs aspects d'une organisation écologique :
 
 - **Gestion des dons** : Collecte de dons monétaires et matériels avec paiement sécurisé
 - **Boutique en ligne** : Vente de produits écologiques avec gestion des stocks par dépôt
